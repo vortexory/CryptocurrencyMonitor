@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -21,81 +22,57 @@ export default function Home() {
     queryKey: ["cryptocurrencies"],
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  console.log(cryptocurrencies);
-
   return (
     <main className="wrapper">
-      <Table>
-        <TableCaption>
-          A list of the most popular cryptocurrencies.
-        </TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>#</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>1h %</TableHead>
-            <TableHead>24h %</TableHead>
-            <TableHead>7d %</TableHead>
-            <TableHead>Market Cap</TableHead>
-            <TableHead>Volume(24h)</TableHead>
-            <TableHead>Circulating Supply</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">1</TableCell>
-            <TableCell>Bitcoin BTC</TableCell>
-            <TableCell>$44,000.55</TableCell>
-            <TableCell className="text-green-500">3%</TableCell>
-            <TableCell className="text-red-500">-5%</TableCell>
-            <TableCell className="text-green-500">7%</TableCell>
-            <TableHead>$871,718,020,693</TableHead>
-            <TableHead>$24,349,067,552</TableHead>
-            <TableHead>19,564,418 BTC</TableHead>
-          </TableRow>
-
-          <TableRow>
-            <TableCell className="font-medium">1</TableCell>
-            <TableCell>Bitcoin BTC</TableCell>
-            <TableCell>$44,000.55</TableCell>
-            <TableCell className="text-green-500">3%</TableCell>
-            <TableCell className="text-red-500">-5%</TableCell>
-            <TableCell className="text-green-500">7%</TableCell>
-            <TableHead>$871,718,020,693</TableHead>
-            <TableHead>$24,349,067,552</TableHead>
-            <TableHead>19,564,418 BTC</TableHead>
-          </TableRow>
-
-          <TableRow>
-            <TableCell className="font-medium">1</TableCell>
-            <TableCell>Bitcoin BTC</TableCell>
-            <TableCell>$44,000.55</TableCell>
-            <TableCell className="text-green-500">3%</TableCell>
-            <TableCell className="text-red-500">-5%</TableCell>
-            <TableCell className="text-green-500">7%</TableCell>
-            <TableHead>$871,718,020,693</TableHead>
-            <TableHead>$24,349,067,552</TableHead>
-            <TableHead>19,564,418 BTC</TableHead>
-          </TableRow>
-
-          <TableRow>
-            <TableCell className="font-medium">1</TableCell>
-            <TableCell>Bitcoin BTC</TableCell>
-            <TableCell>$44,000.55</TableCell>
-            <TableCell className="text-green-500">3%</TableCell>
-            <TableCell className="text-red-500">-5%</TableCell>
-            <TableCell className="text-green-500">7%</TableCell>
-            <TableHead>$871,718,020,693</TableHead>
-            <TableHead>$24,349,067,552</TableHead>
-            <TableHead>19,564,418 BTC</TableHead>
-          </TableRow>
-        </TableBody>
-      </Table>
+      {isLoading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="w-full h-4 rounded-sm" />
+          <Skeleton className="w-full h-4 rounded-sm" />
+          <Skeleton className="w-full h-4 rounded-sm" />
+          <Skeleton className="w-full h-4 rounded-sm" />
+          <Skeleton className="w-full h-4 rounded-sm" />
+        </div>
+      ) : (
+        <Table>
+          <TableCaption>
+            A list of the most popular cryptocurrencies.
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>#</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>1h %</TableHead>
+              <TableHead>24h %</TableHead>
+              <TableHead>7d %</TableHead>
+              <TableHead>Market Cap</TableHead>
+              <TableHead>Volume(24h)</TableHead>
+              <TableHead>Circulating Supply</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {cryptocurrencies?.data?.map((coin: CryptoData) => (
+              <TableRow>
+                <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
+                <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
+                <TableCell>{coin.quote.USD.price}</TableCell>
+                <TableCell className="text-green-500">
+                  {coin.quote.USD.percent_change_1h}%
+                </TableCell>
+                <TableCell className="text-red-500">
+                  {coin.quote.USD.percent_change_24h}%
+                </TableCell>
+                <TableCell className="text-green-500">
+                  {coin.quote.USD.percent_change_7d}%
+                </TableCell>
+                <TableHead>{coin.quote.USD.market_cap}</TableHead>
+                <TableHead>{coin.quote.USD.volume_24h}%</TableHead>
+                <TableHead>{coin.circulating_supply}</TableHead>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </main>
   );
 }
