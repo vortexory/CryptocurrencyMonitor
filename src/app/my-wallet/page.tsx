@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import ActionsCell from "@/components/ActionsCell";
 import { Progress } from "@/components/ui/progress";
+import AddCoinDialog from "@/components/AddCoinDialog";
 
 const page = () => {
   return (
@@ -104,9 +105,7 @@ const page = () => {
 
           <Table>
             <TableCaption>
-              <Button variant="ghost">
-                <PlusIcon className="mr-2" /> Add asset
-              </Button>
+              <AddCoinDialog />
             </TableCaption>
             <TableHeader>
               <TableRow>
