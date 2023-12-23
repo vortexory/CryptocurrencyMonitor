@@ -15,7 +15,7 @@ interface Quote {
   volume_change_24h: number | null;
 }
 
-interface CryptoData {
+export interface CoinData {
   circulating_supply: number | null;
   cmc_rank: number | null;
   date_added: string | null;
@@ -36,4 +36,16 @@ interface CryptoData {
   tags: string[];
   total_supply: number | null;
   tvl_ratio: number | null;
+}
+
+export interface QuoteResponse {
+  status: {
+    timestamp: string;
+    error_code: number;
+    error_message: string | null;
+    elapsed: number;
+    credit_count: number;
+    notice: string | null;
+  };
+  data: CoinData;
 }

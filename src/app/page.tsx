@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
@@ -51,7 +52,7 @@ export default function Home() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cryptocurrencies?.data?.map((coin: CryptoData) => (
+            {cryptocurrencies?.data?.map((coin: CoinData) => (
               <TableRow>
                 <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
                 <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>

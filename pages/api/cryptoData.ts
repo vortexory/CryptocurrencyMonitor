@@ -1,4 +1,4 @@
-import { CMC_API_KEY, CMC_API_URL } from "@/utils/constants";
+import { CMC_API_KEY, CMC_LIST_URL } from "@/utils/constants";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -12,7 +12,7 @@ export default async function handler(
   }
 
   try {
-    const response = await fetch(`${CMC_API_URL}${CMC_API_KEY}${apiKey}`);
+    const response = await fetch(`${CMC_LIST_URL}${CMC_API_KEY}${apiKey}`);
     const data = await response.json();
     res.status(200).json(data);
   } catch (error) {

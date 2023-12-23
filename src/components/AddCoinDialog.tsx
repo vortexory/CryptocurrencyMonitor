@@ -15,21 +15,25 @@ import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
 import { useQuery } from "@tanstack/react-query";
+import { Badge } from "./ui/badge";
+import { CoinData } from "@/utils/interfaces";
 
 const AddCoinDialog = () => {
   const [inputValue, setInputValue] = useState<string>("");
+  const [hasSearched, setHasSearched] = useState<boolean>(false);
 
   const {
-    data: coin,
+    data: coins,
     isLoading,
     refetch,
+    isFetching,
   } = useQuery({
     queryFn: async () => {
-      const response = await fetch(`api/getCoin?symbol=${inputValue}`);
+      const response = await fetch(`api/getCoins?symbol=${inputValue}`);
 
       return response.json();
     },
-    queryKey: ["coin"],
+    queryKey: ["coins"],
     enabled: false,
   });
 
@@ -37,6 +41,9 @@ const AddCoinDialog = () => {
 
   const searchCoin = () => {
     if (searchTerm) {
+      if (!hasSearched) {
+        setHasSearched(true);
+      }
       refetch();
     }
   };
@@ -56,9 +63,48 @@ const AddCoinDialog = () => {
           <Input
             placeholder="Search"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              if (hasSearched) {
+                setHasSearched(false);
+              }
+
+              setInputValue(e.target.value);
+            }}
           />
-          <Button type="button" disabled={!searchTerm} onClick={searchCoin}>
+
+          <div className="my-2">
+            {isLoading || isFetching ? (
+              <div>Loading...</div>
+            ) : hasSearched ? (
+              coins?.length > 0 ? (
+                coins.map((coinObj: any) => {
+                  const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                  return (
+                    <Badge
+                      className="py-2 cursor-pointer"
+                      key={coin.id}
+                      variant="secondary"
+                    >
+                      {coin.name} {coin.symbol} -{" "}
+                      {coin.quote.USD.price
+                        ? `$${coin.quote.USD.price}`
+                        : "Price not provided"}
+                    </Badge>
+                  );
+                })
+              ) : (
+                <Badge className="py-2" variant="destructive">
+                  Coin not found
+                </Badge>
+              )
+            ) : null}
+          </div>
+
+          <Button
+            type="button"
+            disabled={!searchTerm || isLoading}
+            onClick={searchCoin}
+          >
             Search
           </Button>
         </div>
