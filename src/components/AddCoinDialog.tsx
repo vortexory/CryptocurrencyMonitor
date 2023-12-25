@@ -12,7 +12,7 @@ import {
 
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, ChevronRight } from "lucide-react";
 import { Input } from "./ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
@@ -81,14 +81,17 @@ const AddCoinDialog = () => {
                   const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
                   return (
                     <Badge
-                      className="py-2 cursor-pointer"
+                      className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
                       key={coin.id}
                       variant="secondary"
                     >
-                      {coin.name} {coin.symbol} -{" "}
-                      {coin.quote.USD.price
-                        ? `$${coin.quote.USD.price}`
-                        : "Price not provided"}
+                      <p>
+                        {coin.name} {coin.symbol} -{" "}
+                        {coin.quote.USD.price
+                          ? `$${coin.quote.USD.price.toFixed(2)}`
+                          : "Price not provided"}
+                      </p>
+                      <ChevronRight />
                     </Badge>
                   );
                 })
