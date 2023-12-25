@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navigation from "@/components/Navigation";
 import TanstackProvider from "@/providers/TanstackProvider";
+import { WalletProvider } from "@/providers/WalletProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <TanstackProvider>
-          <ThemeProvider attribute="class" defaultTheme="system">
-            <Navigation />
-            {children}
-          </ThemeProvider>
+          <WalletProvider>
+            <ThemeProvider attribute="class" defaultTheme="system">
+              <Navigation />
+              {children}
+            </ThemeProvider>
+          </WalletProvider>
         </TanstackProvider>
       </body>
     </html>
