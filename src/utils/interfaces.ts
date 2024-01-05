@@ -49,3 +49,8 @@ export interface QuoteResponse {
   };
   data: CoinData;
 }
+
+export interface SelectedCoinInfo {
+  quantity: number;
+  pricePerCoin: number;
+}

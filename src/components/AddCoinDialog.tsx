@@ -9,21 +9,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon, ChevronRight } from "lucide-react";
 import { Input } from "./ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
-import { CoinData } from "@/utils/interfaces";
+import { CoinData, SelectedCoinInfo } from "@/utils/interfaces";
 import { useWallet } from "@/providers/WalletProvider";
 
 const AddCoinDialog = () => {
+  const { selectedCoin, selectCoin, unselectCoin } = useWallet();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
-
-  const { selectedCoin, selectCoin, unselectCoin } = useWallet();
+  const [selectedCoinInfo, setSelectedCoinInfo] = useState<SelectedCoinInfo>({
+    quantity: 0,
+    pricePerCoin: 0,
+  });
 
   const {
     data: coins,
@@ -51,13 +57,23 @@ const AddCoinDialog = () => {
     }
   };
 
+  const resetDialogState = () => {
+    unselectCoin();
+    setInputValue("");
+    setHasSearched(false);
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      resetDialogState();
+    }
+  }, [isModalOpen]);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost">
-          <PlusIcon className="mr-2" /> Add asset
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Button variant="ghost" onClick={() => setIsModalOpen(true)}>
+        <PlusIcon className="mr-2" /> Add asset
+      </Button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add a coin</DialogTitle>
@@ -77,7 +93,7 @@ const AddCoinDialog = () => {
                 }}
               />
 
-              <div className="my-2 flex flex-col gap-3">
+              <div className="flex flex-col gap-3">
                 {isLoading || isFetching ? (
                   <div>Loading...</div>
                 ) : hasSearched ? (
@@ -86,7 +102,16 @@ const AddCoinDialog = () => {
                       const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
                       return (
                         <Badge
-                          onClick={() => selectCoin(coin)}
+                          onClick={() => {
+                            selectCoin(coin);
+
+                            if (coin.quote.USD.price) {
+                              setSelectedCoinInfo((prev) => ({
+                                ...prev,
+                                pricePerCoin: coin.quote.USD.price ?? 0,
+                              }));
+                            }
+                          }}
                           className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
                           key={coin.id}
                           variant="secondary"
@@ -107,42 +132,89 @@ const AddCoinDialog = () => {
                     </Badge>
                   )
                 ) : null}
+                <Button
+                  type="button"
+                  disabled={!searchTerm || isLoading}
+                  onClick={searchCoin}
+                >
+                  Search
+                </Button>
               </div>
-
-              <Button
-                type="button"
-                disabled={!searchTerm || isLoading}
-                onClick={searchCoin}
-              >
-                Search
-              </Button>
             </>
           ) : (
             <>
-              <Input value={selectedCoin?.name ?? ""} disabled />
+              <Input
+                value={`${selectedCoin.name} ${selectedCoin.symbol}`}
+                disabled
+              />
               <div className="flex-container-center gap-2">
-                <Input type="number" placeholder="Quantity" />
-                <Input
-                  type="number"
-                  placeholder="Price per coin"
-                  value={selectedCoin?.quote.USD.price?.toFixed(2) ?? 0}
-                />
+                <div className="flex flex-col gap-2 flex-1">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    placeholder="0.00"
+                    value={selectedCoinInfo.quantity}
+                    onChange={(e) =>
+                      setSelectedCoinInfo((prev) => ({
+                        ...prev,
+                        quantity: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <Label htmlFor="ppc">Price Per Coin</Label>
+                  <Input
+                    id="ppc"
+                    type="number"
+                    placeholder="0.00"
+                    value={selectedCoinInfo.pricePerCoin.toFixed(2)}
+                    onChange={(e) =>
+                      setSelectedCoinInfo((prev) => ({
+                        ...prev,
+                        pricePerCoin: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
               </div>
+              <div className="bg-secondary p-3 rounded-md">
+                <h6 className="font-bold mb-1">Total Spent</h6>
+                <p>
+                  ${" "}
+                  {(
+                    selectedCoinInfo.quantity * selectedCoinInfo.pricePerCoin
+                  ).toFixed(2)}
+                </p>
+              </div>
+              <Button
+                type="button"
+                disabled={
+                  !selectedCoinInfo.quantity || !selectedCoinInfo.pricePerCoin
+                }
+                onClick={searchCoin}
+              >
+                Add Transaction
+              </Button>
             </>
           )}
         </div>
 
         <DialogFooter className="sm:justify-end">
           {selectedCoin && (
-            <Button type="button" variant="outline" onClick={unselectCoin}>
+            <Button type="button" variant="outline" onClick={resetDialogState}>
               Back
             </Button>
           )}
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setIsModalOpen(false)}
+          >
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
