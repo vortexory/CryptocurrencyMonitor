@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatPrice } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 
@@ -56,19 +57,19 @@ export default function Home() {
               <TableRow>
                 <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
                 <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
-                <TableCell>{coin.quote.USD.price}</TableCell>
+                <TableCell>${formatPrice(coin.quote.USD.price ?? 0)}</TableCell>
                 <TableCell className="text-green-500">
-                  {coin.quote.USD.percent_change_1h}%
+                  {formatPrice(coin.quote.USD.percent_change_1h ?? 0)}%
                 </TableCell>
                 <TableCell className="text-red-500">
-                  {coin.quote.USD.percent_change_24h}%
+                  {formatPrice(coin.quote.USD.percent_change_24h ?? 0)}%
                 </TableCell>
                 <TableCell className="text-green-500">
-                  {coin.quote.USD.percent_change_7d}%
+                  {formatPrice(coin.quote.USD.percent_change_7d ?? 0)}%
                 </TableCell>
-                <TableHead>{coin.quote.USD.market_cap}</TableHead>
-                <TableHead>{coin.quote.USD.volume_24h}%</TableHead>
-                <TableHead>{coin.circulating_supply}</TableHead>
+                <TableHead>{coin.quote.USD.market_cap?.toFixed(2)}</TableHead>
+                <TableHead>{coin.quote.USD.volume_24h?.toFixed(2)}</TableHead>
+                <TableHead>{coin.circulating_supply?.toFixed(2)}</TableHead>
               </TableRow>
             ))}
           </TableBody>
