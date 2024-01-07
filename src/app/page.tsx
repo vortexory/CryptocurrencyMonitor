@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatPrice } from "@/utils/functions";
+import { formatAsCurrency, formatPrice } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 
@@ -59,7 +59,7 @@ export default function Home() {
                   <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
                   <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
                   <TableCell>
-                    ${formatPrice(coin.quote.USD.price ?? 0)}
+                    {formatPrice(coin.quote.USD.price ?? 0)}
                   </TableCell>
                   <TableCell
                     className={
@@ -68,7 +68,7 @@ export default function Home() {
                         : "text-red-500"
                     }
                   >
-                    {formatPrice(coin.quote.USD.percent_change_1h ?? 0)}%
+                    {formatPrice(coin.quote.USD.percent_change_1h ?? 0, false)}%
                   </TableCell>
                   <TableCell
                     className={
@@ -77,7 +77,8 @@ export default function Home() {
                         : "text-red-500"
                     }
                   >
-                    {formatPrice(coin.quote.USD.percent_change_24h ?? 0)}%
+                    {formatPrice(coin.quote.USD.percent_change_24h ?? 0, false)}
+                    %
                   </TableCell>
                   <TableCell
                     className={
@@ -86,11 +87,23 @@ export default function Home() {
                         : "text-red-500"
                     }
                   >
-                    {formatPrice(coin.quote.USD.percent_change_7d ?? 0)}%
+                    {formatPrice(coin.quote.USD.percent_change_7d ?? 0, false)}%
                   </TableCell>
-                  <TableHead>{coin.quote.USD.market_cap?.toFixed(2)}</TableHead>
-                  <TableHead>{coin.quote.USD.volume_24h?.toFixed(2)}</TableHead>
-                  <TableHead>{coin.circulating_supply?.toFixed(2)}</TableHead>
+                  <TableHead>
+                    {formatAsCurrency(
+                      +(coin?.quote?.USD?.market_cap?.toFixed(2) ?? 0)
+                    )}
+                  </TableHead>
+                  <TableHead>
+                    {formatAsCurrency(
+                      +(coin.quote.USD.volume_24h?.toFixed(2) ?? 0)
+                    )}
+                  </TableHead>
+                  <TableHead>
+                    {formatAsCurrency(
+                      +(coin.circulating_supply?.toFixed(2) ?? 0)
+                    )}
+                  </TableHead>
                 </TableRow>
               );
             })}

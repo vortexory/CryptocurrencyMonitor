@@ -1,6 +1,15 @@
-export const formatPrice = (price: number) => {
+export const formatAsCurrency = (price: number) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(price);
+};
+
+export const formatPrice = (price: number, asCurrency: boolean = true) => {
   if (price >= 0.01) {
-    return price.toFixed(2);
+    return formatAsCurrency
+      ? formatAsCurrency(+price.toFixed(2))
+      : +price.toFixed(2);
   } else {
     const priceAsString = price.toString();
 
@@ -17,6 +26,8 @@ export const formatPrice = (price: number) => {
     }
 
     const toFixed = initialIndex + 2;
-    return price.toFixed(toFixed);
+    return asCurrency
+      ? formatAsCurrency(+price.toFixed(toFixed))
+      : +price.toFixed(toFixed);
   }
 };
