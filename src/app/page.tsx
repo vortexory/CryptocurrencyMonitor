@@ -53,25 +53,47 @@ export default function Home() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cryptocurrencies?.data?.map((coin: CoinData) => (
-              <TableRow>
-                <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
-                <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
-                <TableCell>${formatPrice(coin.quote.USD.price ?? 0)}</TableCell>
-                <TableCell className="text-green-500">
-                  {formatPrice(coin.quote.USD.percent_change_1h ?? 0)}%
-                </TableCell>
-                <TableCell className="text-red-500">
-                  {formatPrice(coin.quote.USD.percent_change_24h ?? 0)}%
-                </TableCell>
-                <TableCell className="text-green-500">
-                  {formatPrice(coin.quote.USD.percent_change_7d ?? 0)}%
-                </TableCell>
-                <TableHead>{coin.quote.USD.market_cap?.toFixed(2)}</TableHead>
-                <TableHead>{coin.quote.USD.volume_24h?.toFixed(2)}</TableHead>
-                <TableHead>{coin.circulating_supply?.toFixed(2)}</TableHead>
-              </TableRow>
-            ))}
+            {cryptocurrencies?.data?.map((coin: CoinData) => {
+              return (
+                <TableRow>
+                  <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
+                  <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
+                  <TableCell>
+                    ${formatPrice(coin.quote.USD.price ?? 0)}
+                  </TableCell>
+                  <TableCell
+                    className={
+                      (coin.quote.USD.percent_change_1h ?? 0) >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {formatPrice(coin.quote.USD.percent_change_1h ?? 0)}%
+                  </TableCell>
+                  <TableCell
+                    className={
+                      (coin.quote.USD.percent_change_24h ?? 0) >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {formatPrice(coin.quote.USD.percent_change_24h ?? 0)}%
+                  </TableCell>
+                  <TableCell
+                    className={
+                      (coin.quote.USD.percent_change_7d ?? 0) >= 0
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }
+                  >
+                    {formatPrice(coin.quote.USD.percent_change_7d ?? 0)}%
+                  </TableCell>
+                  <TableHead>{coin.quote.USD.market_cap?.toFixed(2)}</TableHead>
+                  <TableHead>{coin.quote.USD.volume_24h?.toFixed(2)}</TableHead>
+                  <TableHead>{coin.circulating_supply?.toFixed(2)}</TableHead>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       )}
