@@ -16,7 +16,6 @@ export const connectToDB = async () => {
       {
         dbName: "crypto-wallet",
         useNewUrlParser: true,
-        useUnifiedTopology: true,
       } as ConnectOptions
     );
 

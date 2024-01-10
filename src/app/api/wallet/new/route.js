@@ -10,7 +10,7 @@ export const POST = async (req) => {
     const user = await User.findById(userId);
 
     if (!walletName) {
-      return new Response("Wallet name must be provided", { status: 404 });
+      return new Response("Wallet name must be provided", { status: 400 });
     }
 
     if (!user) {

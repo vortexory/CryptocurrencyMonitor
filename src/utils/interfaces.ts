@@ -54,3 +54,13 @@ export interface SelectedCoinInfo {
   quantity: number;
   pricePerCoin: number;
 }
+
+export interface Session {
+  expires: string | null;
+  user: {
+    email: string | null;
+    id: string | null;
+    image: string | null;
+    name: string | null;
+  } | null;
+}

@@ -1,6 +1,4 @@
 import Wallet from "@/components/Wallet";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -20,6 +18,7 @@ import {
 import ActionsCell from "@/components/ActionsCell";
 import { Progress } from "@/components/ui/progress";
 import AddCoinDialog from "@/components/AddCoinDialog";
+import CreatePortfolioDialog from "@/components/CreatePortfolioDialog";
 
 const page = () => {
   return (
@@ -31,9 +30,7 @@ const page = () => {
 
         <Wallet walletName="Crypto" />
         <Wallet walletName="EUR" />
-        <Button variant="ghost">
-          <PlusIcon className="mr-2" /> Create portfolio
-        </Button>
+        <CreatePortfolioDialog />
       </div>
       <div className="flex-[4] flex flex-col gap-12">
         <div className="flex justify-between gap-12">
