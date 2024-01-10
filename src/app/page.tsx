@@ -13,13 +13,22 @@ import {
 import { formatAsCurrency, formatPrice } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function Home() {
   const { data: cryptocurrencies, isLoading } = useQuery({
     queryFn: async () => {
-      const response = await fetch(`api/cryptoData`);
+      try {
+        const response = await axios.get("/api/cryptoData");
 
-      return response.json();
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch data");
+        }
+
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
     },
     queryKey: ["cryptocurrencies"],
   });
@@ -55,7 +64,7 @@ export default function Home() {
           <TableBody>
             {cryptocurrencies?.data?.map((coin: CoinData) => {
               return (
-                <TableRow>
+                <TableRow key={coin.id}>
                   <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
                   <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
                   <TableCell>
