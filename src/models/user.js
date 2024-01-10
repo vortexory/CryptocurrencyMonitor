@@ -1,4 +1,5 @@
 import { Schema, model, models } from "mongoose";
+import WalletSchema from "@/models/wallet";
 
 const UserSchema = new Schema({
   email: {
@@ -16,6 +17,10 @@ const UserSchema = new Schema({
   },
   image: {
     type: String,
+  },
+  wallets: {
+    type: [WalletSchema],
+    default: [],
   },
 });
 

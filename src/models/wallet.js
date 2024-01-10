@@ -1,15 +1,24 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema } from "mongoose";
 
 const CoinSchema = new Schema({
-  name: String,
-  quantity: Number,
-  pricePerCoin: Number,
+  name: {
+    type: String,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  pricePerCoin: {
+    type: Number,
+    required: true,
+  },
 });
 
 const WalletSchema = new Schema({
-  creator: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+  name: {
+    type: String,
+    required: true,
   },
   coins: {
     type: [CoinSchema],
@@ -17,6 +26,4 @@ const WalletSchema = new Schema({
   },
 });
 
-const Wallet = models.Wallet || model("Wallet", WalletSchema);
-
-export default Wallet;
+export default WalletSchema;

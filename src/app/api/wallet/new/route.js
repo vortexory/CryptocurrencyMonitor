@@ -1,17 +1,32 @@
 import { connectToDB } from "@/utils/database";
-import Wallet from "@/models/wallet";
+import User from "@/models/user";
 
-export const POST = async (req, res) => {
-  const { userId } = await req.json();
+export const POST = async (req) => {
+  const { userId, walletName } = await req.json();
 
   try {
     await connectToDB();
 
-    const newWallet = new Wallet({ creator: userId });
+    const user = await User.findById(userId);
 
-    await newWallet.save();
+    if (!walletName) {
+      return new Response("Wallet name must be provided", { status: 404 });
+    }
 
-    return new Response(JSON.stringify(newWallet), {
+    if (!user) {
+      return new Response("User not found", { status: 404 });
+    }
+
+    const newWallet = {
+      name: walletName,
+      coins: [],
+    };
+
+    user.wallets.push(newWallet);
+
+    await user.save();
+
+    return new Response(JSON.stringify(user), {
       status: 201,
     });
   } catch (error) {
