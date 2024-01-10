@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
@@ -16,16 +16,19 @@ import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Session } from "@/utils/interfaces";
 import axios from "axios";
+import { useToast } from "./ui/use-toast";
 
 const CreatePortfolioDialog = () => {
   const [walletName, setWalletName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { toast } = useToast();
+
   const { data } = useSession();
 
   const session = data as Session | null;
 
-  const { mutateAsync, isPending } = useMutation({
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: (newWallet: { userId: string; walletName: string }) => {
       return axios.post("/api/wallet/new", newWallet);
     },
@@ -47,6 +50,22 @@ const CreatePortfolioDialog = () => {
       setIsModalOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (isError) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    }
+    if (isSuccess) {
+      toast({
+        title: "Wallet created",
+        description: "Your wallet has been created successfully.",
+      });
+    }
+  }, [isError, isSuccess]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

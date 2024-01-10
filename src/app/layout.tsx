@@ -6,6 +6,7 @@ import Navigation from "@/components/Navigation";
 import TanstackProvider from "@/providers/TanstackProvider";
 import { WalletProvider } from "@/providers/WalletProvider";
 import AuthProvider from "@/components/AuthProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
             </WalletProvider>
           </TanstackProvider>
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   );
