@@ -64,3 +64,9 @@ export interface Session {
     name: string | null;
   } | null;
 }
+
+export interface UserWallet {
+  name: string;
+  _id: string;
+  coins: any[];
+}

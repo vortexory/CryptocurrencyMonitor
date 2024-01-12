@@ -18,17 +18,9 @@ import axios from "axios";
 export default function Home() {
   const { data: cryptocurrencies, isLoading } = useQuery({
     queryFn: async () => {
-      try {
-        const response = await axios.get("/api/cryptoData");
+      const response = await axios.get("/api/cryptoData");
 
-        if (response.status !== 200) {
-          throw new Error("Failed to fetch data");
-        }
-
-        return response.data;
-      } catch (error) {
-        console.log(error);
-      }
+      return response.data;
     },
     queryKey: ["cryptocurrencies"],
   });

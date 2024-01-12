@@ -1,3 +1,5 @@
+"use client";
+
 import Wallet from "@/components/Wallet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -19,8 +21,28 @@ import ActionsCell from "@/components/ActionsCell";
 import { Progress } from "@/components/ui/progress";
 import AddCoinDialog from "@/components/AddCoinDialog";
 import CreatePortfolioDialog from "@/components/CreatePortfolioDialog";
+import { useSession } from "next-auth/react";
+import { Session, UserWallet } from "@/utils/interfaces";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const page = () => {
+  const { data } = useSession();
+
+  const session = data as Session;
+
+  const { data: userWallets, isLoading } = useQuery<UserWallet[]>({
+    queryFn: async () => {
+      const response = await axios.get(
+        `/api/wallet/get-user-wallets/${session?.user?.id}`
+      );
+
+      return response.data;
+    },
+    enabled: !!session?.user?.id,
+    queryKey: ["wallets"],
+  });
+
   return (
     <div className="wrapper flex gap-10">
       <div className="flex-1 flex flex-col gap-4">
@@ -28,9 +50,18 @@ const page = () => {
         <div className="h-[1px] bg-foreground" />
         <p>My portfolios (2)</p>
 
-        <Wallet walletName="Crypto" />
-        <Wallet walletName="EUR" />
-        <CreatePortfolioDialog />
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
+              {userWallets?.map((wallet) => (
+                <Wallet key={wallet._id} walletName={wallet.name} />
+              ))}
+            </div>
+            <CreatePortfolioDialog />
+          </div>
+        )}
       </div>
       <div className="flex-[4] flex flex-col gap-12">
         <div className="flex justify-between gap-12">
