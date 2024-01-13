@@ -5,13 +5,16 @@ const Wallet = ({
   walletName,
   selected = false,
   totalValue,
+  onClick,
 }: {
   walletName: string;
   selected?: boolean;
   totalValue: number;
+  onClick: () => void;
 }) => {
   return (
     <div
+      onClick={onClick}
       className={`${
         selected ? "bg-muted-foreground" : "bg-background"
       } flex-container-center gap-3 cursor-pointer hover:bg-muted-foreground p-3 rounded-md`}

@@ -25,8 +25,11 @@ import { useSession } from "next-auth/react";
 import { Session, UserWallet } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useState } from "react";
 
 const page = () => {
+  const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
+
   const { data } = useSession();
 
   const session = data as Session;
@@ -43,10 +46,18 @@ const page = () => {
     queryKey: ["wallets"],
   });
 
+  const totalWalletsValue =
+    userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
+
   return (
     <div className="wrapper flex gap-10">
       <div className="flex-1 flex flex-col gap-4">
-        <Wallet walletName="Overview" selected totalValue={10500} />
+        <Wallet
+          walletName="Overview"
+          selected={!selectedWallet}
+          totalValue={totalWalletsValue}
+          onClick={() => setSelectedWallet(null)}
+        />
         <div className="h-[1px] bg-foreground" />
 
         {isLoading ? (
@@ -61,6 +72,8 @@ const page = () => {
                     key={wallet._id}
                     walletName={wallet.name}
                     totalValue={wallet.totalValue}
+                    onClick={() => setSelectedWallet(wallet)}
+                    selected={wallet._id === selectedWallet?._id}
                   />
                 ))}
               </div>
@@ -79,7 +92,9 @@ const page = () => {
               </Avatar>
               <p className="text-sm text-muted-foreground font-bold">Crypto</p>
             </div>
-            <h3 className="mt-3">$10,000</h3>
+            <h3 className="mt-3">
+              ${selectedWallet ? selectedWallet.totalValue : totalWalletsValue}
+            </h3>
           </div>
 
           <div className="w-2/3 flex flex-col gap-3">
