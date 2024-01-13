@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Wallet = ({
   walletName,
@@ -15,7 +15,6 @@ const Wallet = ({
       } flex-container-center gap-3 cursor-pointer hover:bg-muted-foreground p-3 rounded-md`}
     >
       <Avatar>
-        <AvatarImage src="" alt="" />
         <AvatarFallback>{walletName.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex flex-col gap-1">

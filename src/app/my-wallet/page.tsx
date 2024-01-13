@@ -48,19 +48,21 @@ const page = () => {
       <div className="flex-1 flex flex-col gap-4">
         <Wallet walletName="Overview" selected />
         <div className="h-[1px] bg-foreground" />
-        <p>My portfolios (2)</p>
 
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          <div className="flex flex-col gap-4">
-            <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
-              {userWallets?.map((wallet) => (
-                <Wallet key={wallet._id} walletName={wallet.name} />
-              ))}
+          <>
+            <p>My portfolios ({userWallets?.length})</p>
+            <div className="flex flex-col gap-4">
+              <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
+                {userWallets?.map((wallet) => (
+                  <Wallet key={wallet._id} walletName={wallet.name} />
+                ))}
+              </div>
+              <CreatePortfolioDialog />
             </div>
-            <CreatePortfolioDialog />
-          </div>
+          </>
         )}
       </div>
       <div className="flex-[4] flex flex-col gap-12">
