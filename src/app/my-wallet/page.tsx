@@ -87,10 +87,13 @@ const page = () => {
           <div>
             <div className="flex-container-center gap-2">
               <Avatar>
-                <AvatarImage src="" alt="" />
-                <AvatarFallback>C</AvatarFallback>
+                <AvatarFallback>
+                  {selectedWallet ? selectedWallet.name.charAt(0) : "O"}
+                </AvatarFallback>
               </Avatar>
-              <p className="text-sm text-muted-foreground font-bold">Crypto</p>
+              <p className="text-sm text-muted-foreground font-bold">
+                {selectedWallet ? selectedWallet.name : "Overview"}
+              </p>
             </div>
             <h3 className="mt-3">
               ${selectedWallet ? selectedWallet.totalValue : totalWalletsValue}
@@ -159,71 +162,46 @@ const page = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>1h %</TableHead>
-                <TableHead>24h %</TableHead>
-                <TableHead>7d %</TableHead>
-                <TableHead>Market Cap</TableHead>
-                <TableHead>Volume(24h)</TableHead>
-                <TableHead>Circulating Supply</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right">Quantity</TableHead>
+                <TableHead className="text-right">Avg. Buy Price</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
                 <TableCell>Bitcoin BTC</TableCell>
-                <TableCell>$44,000.55</TableCell>
-                <TableCell className="text-green-500">3%</TableCell>
-                <TableCell className="text-red-500">-5%</TableCell>
-                <TableCell className="text-green-500">7%</TableCell>
-                <TableHead>$871,718,020,693</TableHead>
-                <TableHead>$24,349,067,552</TableHead>
-                <TableHead>19,564,418 BTC</TableHead>
-                <TableHead>
+                <TableCell className="text-right">2</TableCell>
+                <TableCell className="text-right">$2000</TableCell>
+                <TableCell className="text-right">
                   <ActionsCell />
-                </TableHead>
+                </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell>Bitcoin BTC</TableCell>
-                <TableCell>$44,000.55</TableCell>
-                <TableCell className="text-green-500">3%</TableCell>
-                <TableCell className="text-red-500">-5%</TableCell>
-                <TableCell className="text-green-500">7%</TableCell>
-                <TableHead>$871,718,020,693</TableHead>
-                <TableHead>$24,349,067,552</TableHead>
-                <TableHead>19,564,418 BTC</TableHead>
-                <TableHead>
+                <TableCell className="text-right">2</TableCell>
+                <TableCell className="text-right">$2000</TableCell>
+                <TableCell className="text-right">
                   <ActionsCell />
-                </TableHead>
+                </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell>Bitcoin BTC</TableCell>
-                <TableCell>$44,000.55</TableCell>
-                <TableCell className="text-green-500">3%</TableCell>
-                <TableCell className="text-red-500">-5%</TableCell>
-                <TableCell className="text-green-500">7%</TableCell>
-                <TableHead>$871,718,020,693</TableHead>
-                <TableHead>$24,349,067,552</TableHead>
-                <TableHead>19,564,418 BTC</TableHead>
-                <TableHead>
+                <TableCell className="text-right">2</TableCell>
+                <TableCell className="text-right">$2000</TableCell>
+                <TableCell className="text-right">
                   <ActionsCell />
-                </TableHead>
+                </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell>Bitcoin BTC</TableCell>
-                <TableCell>$44,000.55</TableCell>
-                <TableCell className="text-green-500">3%</TableCell>
-                <TableCell className="text-red-500">-5%</TableCell>
-                <TableCell className="text-green-500">7%</TableCell>
-                <TableHead>$871,718,020,693</TableHead>
-                <TableHead>$24,349,067,552</TableHead>
-                <TableHead>19,564,418 BTC</TableHead>
-                <TableHead>
+                <TableCell className="text-right">2</TableCell>
+                <TableCell className="text-right">$2000</TableCell>
+                <TableCell className="text-right">
                   <ActionsCell />
-                </TableHead>
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
