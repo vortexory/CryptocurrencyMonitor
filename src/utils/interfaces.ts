@@ -69,4 +69,5 @@ export interface UserWallet {
   name: string;
   _id: string;
   coins: any[];
+  totalValue: number;
 }

@@ -46,7 +46,7 @@ const page = () => {
   return (
     <div className="wrapper flex gap-10">
       <div className="flex-1 flex flex-col gap-4">
-        <Wallet walletName="Overview" selected />
+        <Wallet walletName="Overview" selected totalValue={10500} />
         <div className="h-[1px] bg-foreground" />
 
         {isLoading ? (
@@ -57,7 +57,11 @@ const page = () => {
             <div className="flex flex-col gap-4">
               <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
                 {userWallets?.map((wallet) => (
-                  <Wallet key={wallet._id} walletName={wallet.name} />
+                  <Wallet
+                    key={wallet._id}
+                    walletName={wallet.name}
+                    totalValue={wallet.totalValue}
+                  />
                 ))}
               </div>
               <CreatePortfolioDialog />

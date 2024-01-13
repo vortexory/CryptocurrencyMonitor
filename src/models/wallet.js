@@ -16,6 +16,10 @@ const CoinSchema = new Schema({
 });
 
 const WalletSchema = new Schema({
+  totalValue: {
+    type: Number,
+    default: 0,
+  },
   name: {
     type: String,
     required: true,

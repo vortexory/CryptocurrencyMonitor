@@ -20,6 +20,7 @@ export const POST = async (req) => {
     const newWallet = {
       name: walletName,
       coins: [],
+      totalValue: 0,
     };
 
     user.wallets.push(newWallet);

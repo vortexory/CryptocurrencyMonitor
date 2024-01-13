@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Session } from "@/utils/interfaces";
 import axios from "axios";
@@ -21,6 +21,8 @@ import { useToast } from "./ui/use-toast";
 const CreatePortfolioDialog = () => {
   const [walletName, setWalletName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const { toast } = useToast();
 
@@ -31,6 +33,9 @@ const CreatePortfolioDialog = () => {
   const { mutateAsync, isPending, isError, isSuccess } = useMutation({
     mutationFn: (newWallet: { userId: string; walletName: string }) => {
       return axios.post("/api/wallet/new", newWallet);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallets"] });
     },
   });
 
