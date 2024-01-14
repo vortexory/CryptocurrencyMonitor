@@ -64,7 +64,7 @@ export const POST = async (req) => {
 
     await user.save();
 
-    return new Response(JSON.stringify(user), {
+    return new Response(JSON.stringify(currentWallet), {
       status: 201,
     });
   } catch (error) {

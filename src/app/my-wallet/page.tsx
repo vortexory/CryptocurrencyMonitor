@@ -26,6 +26,7 @@ import { Session, UserWallet } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
+import { calculateAvgBuyPrice } from "@/utils/functions";
 
 const page = () => {
   const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
@@ -157,7 +158,10 @@ const page = () => {
 
           <Table>
             <TableCaption>
-              <AddCoinDialog walletId={selectedWallet?._id} />
+              <AddCoinDialog
+                walletId={selectedWallet?._id}
+                setSelectedWallet={setSelectedWallet}
+              />
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -171,8 +175,22 @@ const page = () => {
               {selectedWallet?.coins.map((coin) => (
                 <TableRow>
                   <TableCell>{coin.name}</TableCell>
-                  <TableCell className="text-right">2</TableCell>
-                  <TableCell className="text-right">$2000</TableCell>
+                  <TableCell className="text-right">
+                    {coin.transactions
+                      .map(
+                        (transaction: {
+                          quantity: number;
+                          pricePerCoin: number;
+                        }) => transaction.quantity
+                      )
+                      .reduce(
+                        (acc: number, currentVal: number) => acc + currentVal,
+                        0
+                      )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {calculateAvgBuyPrice(coin.transactions)}
+                  </TableCell>
                   <TableCell className="text-right">
                     <ActionsCell />
                   </TableCell>

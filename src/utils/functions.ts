@@ -31,3 +31,27 @@ export const formatPrice = (price: number, asCurrency: boolean = true) => {
       : +price.toFixed(toFixed);
   }
 };
+
+export const calculateAvgBuyPrice = (
+  transactions: {
+    quantity: number;
+    pricePerCoin: number;
+  }[]
+) => {
+  const costArray = transactions.map(
+    (transaction) => transaction.pricePerCoin * transaction.quantity
+  );
+  const quantityArray = transactions.map(
+    (transactions) => transactions.quantity
+  );
+
+  const totalCost = costArray.reduce((acc, currentVal) => acc + currentVal, 0);
+  const totalQuantity = quantityArray.reduce(
+    (acc, currentVal) => acc + currentVal,
+    0
+  );
+
+  const avgBuyPrice = formatPrice(totalCost / totalQuantity);
+
+  return avgBuyPrice;
+};

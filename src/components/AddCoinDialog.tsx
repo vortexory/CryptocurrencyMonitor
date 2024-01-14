@@ -9,18 +9,29 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon, ChevronRight } from "lucide-react";
 import { Input } from "./ui/input";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
-import { CoinData, SelectedCoinInfo, Session } from "@/utils/interfaces";
+import {
+  CoinData,
+  SelectedCoinInfo,
+  Session,
+  UserWallet,
+} from "@/utils/interfaces";
 import { useWallet } from "@/providers/WalletProvider";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-const AddCoinDialog = ({ walletId }: { walletId: string | undefined }) => {
+const AddCoinDialog = ({
+  walletId,
+  setSelectedWallet,
+}: {
+  walletId: string | undefined;
+  setSelectedWallet: Dispatch<SetStateAction<UserWallet | null>>;
+}) => {
   const { data } = useSession();
 
   const session = data as Session | null;
@@ -34,8 +45,6 @@ const AddCoinDialog = ({ walletId }: { walletId: string | undefined }) => {
     quantity: 0,
     pricePerCoin: 0,
   });
-
-  const queryClient = useQueryClient();
 
   const {
     data: coins,
@@ -52,7 +61,7 @@ const AddCoinDialog = ({ walletId }: { walletId: string | undefined }) => {
     enabled: false,
   });
 
-  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: (coin: {
       userId: string;
       walletId: string;
@@ -63,8 +72,8 @@ const AddCoinDialog = ({ walletId }: { walletId: string | undefined }) => {
     }) => {
       return axios.post("/api/wallet/add-coin", coin);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallets"] });
+    onSuccess: (res) => {
+      setSelectedWallet(res.data);
     },
   });
 
