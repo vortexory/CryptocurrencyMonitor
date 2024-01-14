@@ -117,6 +117,10 @@ const AddCoinDialog = ({
 
   const resetDialogState = () => {
     unselectCoin();
+    setSelectedCoinInfo({
+      quantity: 0,
+      pricePerCoin: 0,
+    });
     setInputValue("");
     setHasSearched(false);
   };
