@@ -157,7 +157,7 @@ const page = () => {
 
           <Table>
             <TableCaption>
-              <AddCoinDialog />
+              <AddCoinDialog walletId={selectedWallet?._id} />
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -168,41 +168,16 @@ const page = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>Bitcoin BTC</TableCell>
-                <TableCell className="text-right">2</TableCell>
-                <TableCell className="text-right">$2000</TableCell>
-                <TableCell className="text-right">
-                  <ActionsCell />
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Bitcoin BTC</TableCell>
-                <TableCell className="text-right">2</TableCell>
-                <TableCell className="text-right">$2000</TableCell>
-                <TableCell className="text-right">
-                  <ActionsCell />
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Bitcoin BTC</TableCell>
-                <TableCell className="text-right">2</TableCell>
-                <TableCell className="text-right">$2000</TableCell>
-                <TableCell className="text-right">
-                  <ActionsCell />
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Bitcoin BTC</TableCell>
-                <TableCell className="text-right">2</TableCell>
-                <TableCell className="text-right">$2000</TableCell>
-                <TableCell className="text-right">
-                  <ActionsCell />
-                </TableCell>
-              </TableRow>
+              {selectedWallet?.coins.map((coin) => (
+                <TableRow>
+                  <TableCell>{coin.name}</TableCell>
+                  <TableCell className="text-right">2</TableCell>
+                  <TableCell className="text-right">$2000</TableCell>
+                  <TableCell className="text-right">
+                    <ActionsCell />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>

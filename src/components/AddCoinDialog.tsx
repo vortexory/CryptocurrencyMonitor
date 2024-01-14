@@ -13,12 +13,18 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon, ChevronRight } from "lucide-react";
 import { Input } from "./ui/input";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
-import { CoinData, SelectedCoinInfo } from "@/utils/interfaces";
+import { CoinData, SelectedCoinInfo, Session } from "@/utils/interfaces";
 import { useWallet } from "@/providers/WalletProvider";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
-const AddCoinDialog = () => {
+const AddCoinDialog = ({ walletId }: { walletId: string | undefined }) => {
+  const { data } = useSession();
+
+  const session = data as Session | null;
+
   const { selectedCoin, selectCoin, unselectCoin } = useWallet();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +34,8 @@ const AddCoinDialog = () => {
     quantity: 0,
     pricePerCoin: 0,
   });
+
+  const queryClient = useQueryClient();
 
   const {
     data: coins,
@@ -44,6 +52,22 @@ const AddCoinDialog = () => {
     enabled: false,
   });
 
+  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+    mutationFn: (coin: {
+      userId: string;
+      walletId: string;
+      coinName: string;
+      coinApiID: number;
+      quantity: number;
+      pricePerCoin: number;
+    }) => {
+      return axios.post("/api/wallet/add-coin", coin);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallets"] });
+    },
+  });
+
   const searchTerm = inputValue.trim().length > 0;
 
   const searchCoin = () => {
@@ -52,6 +76,33 @@ const AddCoinDialog = () => {
         setHasSearched(true);
       }
       refetch();
+    }
+  };
+
+  const handleAddCoin = async () => {
+    try {
+      if (
+        session?.user?.id &&
+        walletId &&
+        selectedCoin?.id &&
+        selectedCoinInfo.quantity &&
+        selectedCoinInfo.pricePerCoin
+      ) {
+        const coinData = {
+          userId: session.user.id,
+          walletId: walletId,
+          coinName: `${selectedCoin.name} ${selectedCoin.symbol}`,
+          coinApiID: selectedCoin.id,
+          quantity: selectedCoinInfo.quantity,
+          pricePerCoin: selectedCoinInfo.pricePerCoin,
+        };
+
+        await mutateAsync(coinData);
+      }
+    } catch (error) {
+      console.error("Error adding coin", error);
+    } finally {
+      setIsModalOpen(false);
     }
   };
 
@@ -191,7 +242,7 @@ const AddCoinDialog = () => {
                 disabled={
                   !selectedCoinInfo.quantity || !selectedCoinInfo.pricePerCoin
                 }
-                onClick={searchCoin}
+                onClick={handleAddCoin}
               >
                 Add Transaction
               </Button>
