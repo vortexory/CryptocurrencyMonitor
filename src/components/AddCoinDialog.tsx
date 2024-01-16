@@ -13,7 +13,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon, ChevronRight } from "lucide-react";
 import { Input } from "./ui/input";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
 import {
   CoinData,
@@ -38,6 +38,8 @@ const AddCoinDialog = ({
   const { toast } = useToast();
 
   const session = data as Session | null;
+
+  const queryClient = useQueryClient();
 
   const { selectedCoin, selectCoin, unselectCoin } = useWallet();
 
@@ -77,6 +79,7 @@ const AddCoinDialog = ({
     },
     onSuccess: (res) => {
       setSelectedWallet(res.data);
+      queryClient.invalidateQueries({ queryKey: ["wallets"] });
       toast({
         title: "Coin Added",
         description: "The coin has been added to the wallet.",

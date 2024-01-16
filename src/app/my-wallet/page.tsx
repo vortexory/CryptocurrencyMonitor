@@ -23,7 +23,7 @@ import AddCoinDialog from "@/components/AddCoinDialog";
 import CreatePortfolioDialog from "@/components/CreatePortfolioDialog";
 import { useSession } from "next-auth/react";
 import { Session, UserWallet } from "@/utils/interfaces";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { calculateAvgBuyPrice } from "@/utils/functions";
@@ -35,6 +35,8 @@ const page = () => {
   const { data } = useSession();
 
   const session = data as Session;
+
+  const queryClient = useQueryClient();
 
   const { toast } = useToast();
 
@@ -63,6 +65,7 @@ const page = () => {
     },
     onSuccess: (res) => {
       setSelectedWallet(res.data);
+      queryClient.invalidateQueries({ queryKey: ["wallets"] });
       toast({
         title: "Coin Deleted",
         description: "The coin has been deleted from the wallet.",
