@@ -8,7 +8,15 @@ import {
 import { Button } from "./ui/button";
 import { MoreVertical } from "lucide-react";
 
-const ActionsCell = () => {
+const ActionsCell = ({
+  handleDeleteCoin,
+  walletId,
+  coinApiID,
+}: {
+  handleDeleteCoin: (walletId: string, coinApiID: number) => Promise<void>;
+  walletId: string;
+  coinApiID: number;
+}) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,7 +29,10 @@ const ActionsCell = () => {
           Transactions
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="cursor-pointer hover:bg-muted-foreground">
+        <DropdownMenuLabel
+          className="cursor-pointer hover:bg-muted-foreground"
+          onClick={() => handleDeleteCoin(walletId, coinApiID)}
+        >
           Remove
         </DropdownMenuLabel>
       </DropdownMenuContent>

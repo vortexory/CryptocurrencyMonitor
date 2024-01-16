@@ -23,10 +23,11 @@ import AddCoinDialog from "@/components/AddCoinDialog";
 import CreatePortfolioDialog from "@/components/CreatePortfolioDialog";
 import { useSession } from "next-auth/react";
 import { Session, UserWallet } from "@/utils/interfaces";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { calculateAvgBuyPrice } from "@/utils/functions";
+import { useToast } from "@/components/ui/use-toast";
 
 const page = () => {
   const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
@@ -34,6 +35,8 @@ const page = () => {
   const { data } = useSession();
 
   const session = data as Session;
+
+  const { toast } = useToast();
 
   const { data: userWallets, isLoading } = useQuery<UserWallet[]>({
     queryFn: async () => {
@@ -49,6 +52,46 @@ const page = () => {
 
   const totalWalletsValue =
     userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
+
+  const { mutateAsync } = useMutation({
+    mutationFn: (coin: {
+      userId: string;
+      walletId: string;
+      coinApiID: number;
+    }) => {
+      return axios.patch("/api/wallet/delete-coin", coin);
+    },
+    onSuccess: (res) => {
+      setSelectedWallet(res.data);
+      toast({
+        title: "Coin Deleted",
+        description: "The coin has been deleted from the wallet.",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    },
+  });
+
+  const handleDeleteCoin = async (walletId: string, coinApiID: number) => {
+    try {
+      if (session?.user?.id) {
+        const coinData = {
+          userId: session.user.id,
+          walletId,
+          coinApiID,
+        };
+
+        await mutateAsync(coinData);
+      }
+    } catch (error) {
+      console.error("Error deleting coin", error);
+    }
+  };
 
   return (
     <div className="wrapper flex gap-10">
@@ -192,7 +235,11 @@ const page = () => {
                     {calculateAvgBuyPrice(coin.transactions)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <ActionsCell />
+                    <ActionsCell
+                      handleDeleteCoin={handleDeleteCoin}
+                      walletId={selectedWallet._id}
+                      coinApiID={coin.coinApiID}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

@@ -24,6 +24,7 @@ import {
 import { useWallet } from "@/providers/WalletProvider";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
 
 const AddCoinDialog = ({
   walletId,
@@ -33,6 +34,8 @@ const AddCoinDialog = ({
   setSelectedWallet: Dispatch<SetStateAction<UserWallet | null>>;
 }) => {
   const { data } = useSession();
+
+  const { toast } = useToast();
 
   const session = data as Session | null;
 
@@ -74,6 +77,17 @@ const AddCoinDialog = ({
     },
     onSuccess: (res) => {
       setSelectedWallet(res.data);
+      toast({
+        title: "Coin Added",
+        description: "The coin has been added to the wallet.",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
     },
   });
 

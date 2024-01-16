@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils/database";
 import User from "@/models/user";
 import mongoose from "mongoose";
 
-export const DELETE = async (req) => {
+export const PATCH = async (req) => {
   const { userId, walletId, coinApiID } = await req.json();
 
   try {

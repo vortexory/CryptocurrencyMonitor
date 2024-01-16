@@ -36,6 +36,17 @@ const CreatePortfolioDialog = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["wallets"] });
+      toast({
+        title: "Wallet created",
+        description: "Your wallet has been created successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
     },
   });
 
@@ -55,22 +66,6 @@ const CreatePortfolioDialog = () => {
       setIsModalOpen(false);
     }
   };
-
-  useEffect(() => {
-    if (isError) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong",
-        description: "There was a problem with your request.",
-      });
-    }
-    if (isSuccess) {
-      toast({
-        title: "Wallet created",
-        description: "Your wallet has been created successfully.",
-      });
-    }
-  }, [isError, isSuccess]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
