@@ -204,10 +204,12 @@ const page = () => {
 
           <Table>
             <TableCaption>
-              <AddCoinDialog
-                walletId={selectedWallet?._id}
-                setSelectedWallet={setSelectedWallet}
-              />
+              {selectedWallet && (
+                <AddCoinDialog
+                  walletId={selectedWallet?._id}
+                  setSelectedWallet={setSelectedWallet}
+                />
+              )}
             </TableCaption>
             <TableHeader>
               <TableRow>
@@ -219,7 +221,7 @@ const page = () => {
             </TableHeader>
             <TableBody>
               {selectedWallet?.coins.map((coin) => (
-                <TableRow>
+                <TableRow key={coin._id}>
                   <TableCell>{coin.name}</TableCell>
                   <TableCell className="text-right">
                     {coin.transactions

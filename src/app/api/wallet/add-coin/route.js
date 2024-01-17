@@ -52,12 +52,6 @@ export const POST = async (req) => {
       };
 
       currentWallet.coins.push(newCoin);
-
-      const currentWalletIndex = user.wallets.findIndex(
-        (wallet) => wallet._id === walletId
-      );
-
-      user.wallets[currentWalletIndex] = currentWallet;
     } else {
       existingCoin.transactions.push(newTransaction);
     }
