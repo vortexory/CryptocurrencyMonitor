@@ -26,7 +26,7 @@ import { Session, UserWallet } from "@/utils/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import { calculateAvgBuyPrice } from "@/utils/functions";
+import { calculateAvgBuyPrice, formatPrice } from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
 
 const page = () => {
@@ -102,7 +102,7 @@ const page = () => {
         <Wallet
           walletName="Overview"
           selected={!selectedWallet}
-          totalValue={totalWalletsValue}
+          totalValue={formatPrice(totalWalletsValue)}
           onClick={() => setSelectedWallet(null)}
         />
         <div className="h-[1px] bg-foreground" />
@@ -118,7 +118,7 @@ const page = () => {
                   <Wallet
                     key={wallet._id}
                     walletName={wallet.name}
-                    totalValue={wallet.totalValue}
+                    totalValue={formatPrice(wallet.totalValue)}
                     onClick={() => setSelectedWallet(wallet)}
                     selected={wallet._id === selectedWallet?._id}
                   />
@@ -143,7 +143,9 @@ const page = () => {
               </p>
             </div>
             <h3 className="mt-3">
-              ${selectedWallet ? selectedWallet.totalValue : totalWalletsValue}
+              {selectedWallet
+                ? formatPrice(selectedWallet.totalValue)
+                : formatPrice(totalWalletsValue)}
             </h3>
           </div>
 

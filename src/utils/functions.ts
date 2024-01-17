@@ -6,6 +6,8 @@ export const formatAsCurrency = (price: number) => {
 };
 
 export const formatPrice = (price: number, asCurrency: boolean = true) => {
+  if (price === 0) return formatAsCurrency(0);
+
   if (price >= 0.01) {
     return formatAsCurrency
       ? formatAsCurrency(+price.toFixed(2))

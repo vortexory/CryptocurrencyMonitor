@@ -9,7 +9,7 @@ const Wallet = ({
 }: {
   walletName: string;
   selected?: boolean;
-  totalValue: number;
+  totalValue: number | string;
   onClick: () => void;
 }) => {
   return (
@@ -24,7 +24,7 @@ const Wallet = ({
       </Avatar>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-bold">{walletName}</p>
-        <p className="text-xs">${totalValue}</p>
+        <p className="text-xs">{totalValue}</p>
       </div>
     </div>
   );
