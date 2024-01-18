@@ -56,6 +56,10 @@ export const POST = async (req) => {
       existingCoin.transactions.push(newTransaction);
     }
 
+    const newTransactionValue = +(quantity * pricePerCoin).toFixed(2);
+
+    currentWallet.totalValue = +currentWallet.totalValue + newTransactionValue;
+
     await user.save();
 
     return new Response(JSON.stringify(currentWallet), {

@@ -48,13 +48,23 @@ export const PATCH = async (req) => {
 
     currentWallet.coins = filteredCoins;
 
+    const totalDeletedCoinValue = +existingCoin.transactions
+      .map(
+        (transaction) =>
+          +(transaction.quantity * transaction.pricePerCoin).toFixed(2)
+      )
+      .reduce((acc, currentVal) => acc + currentVal, 0);
+
+    currentWallet.totalValue =
+      +currentWallet.totalValue - totalDeletedCoinValue;
+
     await user.save();
 
     return new Response(JSON.stringify(currentWallet), {
       status: 200,
     });
   } catch (error) {
-    return new Response("Failed to add coin", {
+    return new Response("Failed to delete coin", {
       status: 500,
     });
   }
