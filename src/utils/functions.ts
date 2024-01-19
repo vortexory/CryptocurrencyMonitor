@@ -1,3 +1,5 @@
+import { Coin, UserWallet } from "./interfaces";
+
 export const formatAsCurrency = (price: number) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -56,4 +58,26 @@ export const calculateAvgBuyPrice = (
   const avgBuyPrice = formatPrice(totalCost / totalQuantity);
 
   return avgBuyPrice;
+};
+
+export const aggregateCoins = (wallets: UserWallet[]) => {
+  let combinedCoins: Coin[] = [];
+
+  wallets.forEach((wallet) => {
+    wallet.coins.forEach((coin) => {
+      let existingCoin = combinedCoins.find(
+        (c) => c.coinApiID === coin.coinApiID
+      );
+
+      if (existingCoin) {
+        existingCoin.transactions = existingCoin.transactions.concat(
+          coin.transactions
+        );
+      } else {
+        combinedCoins.push({ ...coin });
+      }
+    });
+  });
+
+  return combinedCoins;
 };

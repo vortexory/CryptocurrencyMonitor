@@ -65,6 +65,19 @@ export interface Session {
   } | null;
 }
 
+interface Transaction {
+  _id: string;
+  quantity: number;
+  pricePerCoin: number;
+}
+
+export interface Coin {
+  coinApiID: number;
+  name: string;
+  transactions: Transaction[];
+  _id: string;
+}
+
 export interface UserWallet {
   name: string;
   _id: string;

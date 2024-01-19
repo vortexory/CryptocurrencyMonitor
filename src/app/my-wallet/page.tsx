@@ -26,7 +26,11 @@ import { Session, UserWallet } from "@/utils/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import { calculateAvgBuyPrice, formatPrice } from "@/utils/functions";
+import {
+  aggregateCoins,
+  calculateAvgBuyPrice,
+  formatPrice,
+} from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 
@@ -132,6 +136,10 @@ const page = () => {
       console.error("Error deleting wallet", error);
     }
   };
+
+  const coinsToDisplay = selectedWallet
+    ? selectedWallet.coins
+    : aggregateCoins(userWallets ?? []);
 
   return (
     <div className="wrapper flex gap-10">
@@ -264,11 +272,13 @@ const page = () => {
                 <TableHead>Name</TableHead>
                 <TableHead className="text-right">Quantity</TableHead>
                 <TableHead className="text-right">Avg. Buy Price</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                {selectedWallet && (
+                  <TableHead className="text-right">Actions</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {selectedWallet?.coins.map((coin) => (
+              {coinsToDisplay.map((coin) => (
                 <TableRow key={coin._id}>
                   <TableCell>{coin.name}</TableCell>
                   <TableCell className="text-right">
@@ -287,13 +297,15 @@ const page = () => {
                   <TableCell className="text-right">
                     {calculateAvgBuyPrice(coin.transactions)}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <ActionsCell
-                      handleDeleteCoin={handleDeleteCoin}
-                      walletId={selectedWallet._id}
-                      coinApiID={coin.coinApiID}
-                    />
-                  </TableCell>
+                  {selectedWallet && (
+                    <TableCell className="text-right">
+                      <ActionsCell
+                        handleDeleteCoin={handleDeleteCoin}
+                        walletId={selectedWallet._id}
+                        coinApiID={coin.coinApiID}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
