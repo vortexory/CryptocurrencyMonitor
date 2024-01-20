@@ -62,6 +62,7 @@ export interface Session {
     id: string | null;
     image: string | null;
     name: string | null;
+    walletsValueGoal: number;
   } | null;
 }
 

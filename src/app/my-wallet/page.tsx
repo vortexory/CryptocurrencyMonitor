@@ -25,7 +25,7 @@ import { useSession } from "next-auth/react";
 import { Session, UserWallet } from "@/utils/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   aggregateCoins,
   calculateAvgBuyPrice,
@@ -33,13 +33,15 @@ import {
 } from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
+import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 
 const page = () => {
-  const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
-
   const { data } = useSession();
 
   const session = data as Session;
+
+  const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
+  const [walletsValueGoal, setWalletsValueGoal] = useState<number>(0);
 
   const queryClient = useQueryClient();
 
@@ -141,6 +143,12 @@ const page = () => {
     ? selectedWallet.coins
     : aggregateCoins(userWallets ?? []);
 
+  useEffect(() => {
+    if (session?.user?.id) {
+      setWalletsValueGoal(session.user.walletsValueGoal);
+    }
+  }, [session]);
+
   return (
     <div className="wrapper flex gap-10">
       <div className="flex-1 flex flex-col gap-4">
@@ -196,9 +204,26 @@ const page = () => {
 
           <div className="w-2/3 flex flex-col gap-3">
             <p className="text-sm text-muted-foreground font-bold">
-              Progress towards your goal - $20,000
+              {walletsValueGoal
+                ? `Progress towards your goal - ${formatPrice(
+                    walletsValueGoal
+                  )}`
+                : "You haven't set a goal yet"}
             </p>
-            <Progress value={50} />
+            <Progress
+              value={
+                walletsValueGoal
+                  ? Math.min(
+                      +((totalWalletsValue / walletsValueGoal) * 100),
+                      100
+                    )
+                  : 0
+              }
+            />
+            <AddEditGoalDialog
+              setWalletsValueGoal={setWalletsValueGoal}
+              walletsValueGoal={walletsValueGoal}
+            />
           </div>
         </div>
         {selectedWallet && (
