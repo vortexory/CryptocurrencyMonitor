@@ -17,6 +17,7 @@ const handler = NextAuth({
       const sessionUser = await User.findOne({ email: session.user.email });
 
       session.user.id = sessionUser._id.toString();
+      session.user.walletsValueGoal = sessionUser.walletsValueGoal;
 
       return session;
     },
@@ -31,7 +32,6 @@ const handler = NextAuth({
             email: profile.email,
             username: profile.name.replace(" ", "").toLowerCase(),
             image: profile.picture,
-            wallets: [],
           });
         }
 

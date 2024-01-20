@@ -22,6 +22,10 @@ const UserSchema = new Schema({
     type: [WalletSchema],
     default: [],
   },
+  walletsValueGoal: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const User = models.User || model("User", UserSchema);
