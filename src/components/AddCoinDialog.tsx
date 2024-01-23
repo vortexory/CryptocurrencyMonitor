@@ -67,7 +67,7 @@ const AddCoinDialog = ({
     enabled: false,
   });
 
-  const { mutateAsync } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (coin: {
       userId: string;
       walletId: string;
@@ -270,7 +270,9 @@ const AddCoinDialog = ({
               <Button
                 type="button"
                 disabled={
-                  !selectedCoinInfo.quantity || !selectedCoinInfo.pricePerCoin
+                  !selectedCoinInfo.quantity ||
+                  !selectedCoinInfo.pricePerCoin ||
+                  isPending
                 }
                 onClick={handleAddCoin}
               >
