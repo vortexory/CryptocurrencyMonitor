@@ -64,6 +64,7 @@ const CreatePortfolioDialog = () => {
       console.error("Error creating wallet:", error);
     } finally {
       setIsModalOpen(false);
+      setWalletName("");
     }
   };
 
