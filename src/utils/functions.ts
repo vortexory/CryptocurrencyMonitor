@@ -81,3 +81,28 @@ export const aggregateCoins = (wallets: UserWallet[]) => {
 
   return combinedCoins;
 };
+
+export const calculateCoinValue = (coin: Coin) => {
+  const totalValue = coin.transactions.reduce((acc, transaction) => {
+    return acc + transaction.pricePerCoin * transaction.quantity;
+  }, 0);
+
+  return {
+    name: coin.name,
+    value: +totalValue.toFixed(2),
+  };
+};
+
+export const getColorByIndex = (index: number) => {
+  const colors = [
+    "#5178ff",
+    "#00cf8a",
+    "#f8c084",
+    "#ff8065",
+    "#00bcd7",
+    "#9745ff",
+    "#284de0",
+    "#afb9cb",
+  ];
+  return colors[index % colors.length];
+};

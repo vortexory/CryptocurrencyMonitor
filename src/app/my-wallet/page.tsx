@@ -1,7 +1,8 @@
 "use client";
 
 import Wallet from "@/components/Wallet";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PieChart } from "react-minimal-pie-chart";
 import {
   Card,
   CardContent,
@@ -29,7 +30,9 @@ import { useEffect, useState } from "react";
 import {
   aggregateCoins,
   calculateAvgBuyPrice,
+  calculateCoinValue,
   formatPrice,
+  getColorByIndex,
 } from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -143,6 +146,29 @@ const page = () => {
     ? selectedWallet.coins
     : aggregateCoins(userWallets ?? []);
 
+  const coinsWithTotalValue = coinsToDisplay
+    .map((coin) => calculateCoinValue(coin))
+    .sort((a, b) => b.value - a.value)
+    .map((coin, index) => ({
+      ...coin,
+      color: getColorByIndex(index),
+    }));
+
+  const topCoins = coinsWithTotalValue.slice(0, 7);
+
+  const others =
+    coinsWithTotalValue.length > 7
+      ? {
+          name: "Others",
+          value: coinsWithTotalValue
+            .slice(7)
+            .reduce((acc, coin) => acc + coin.value, 0),
+          color: getColorByIndex(7),
+        }
+      : null;
+
+  const finalCoins = others ? topCoins.concat(others) : topCoins;
+
   useEffect(() => {
     if (session?.user?.id) {
       setWalletsValueGoal(session.user.walletsValueGoal);
@@ -236,8 +262,51 @@ const page = () => {
           </Button>
         )}
 
+        {finalCoins.length > 0 && (
+          <div className="max-h-80">
+            <Card>
+              <CardHeader>
+                <CardDescription className="font-bold">
+                  Allocation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between gap-12">
+                  <PieChart
+                    data={coinsWithTotalValue}
+                    lineWidth={25}
+                    style={{ height: "250px", flex: 1 }}
+                  />
+                  <div className="flex-1 flex flex-col items-center gap-3">
+                    {finalCoins.map((coin, i) => {
+                      const totalVal = selectedWallet
+                        ? selectedWallet.totalValue
+                        : totalWalletsValue;
+
+                      return (
+                        <div key={i} className="flex justify-between w-64">
+                          <div className="flex-container-center gap-2">
+                            <div
+                              className={`h-3 w-3 rounded-full`}
+                              style={{ backgroundColor: coin.color }}
+                            />
+                            <p className="text-sm font-bold">{coin.name}</p>
+                          </div>
+                          <p className="text-sm font-bold">
+                            {((coin.value / totalVal) * 100).toFixed(2)}%
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         <div className="flex gap-6">
-          <Card>
+          <Card className="flex-1">
             <CardHeader>
               <CardDescription className="font-bold">
                 All-time profit
@@ -249,7 +318,7 @@ const page = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="flex-1">
             <CardHeader>
               <CardDescription className="font-bold">
                 Best Performer
@@ -264,7 +333,7 @@ const page = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="flex-1">
             <CardHeader>
               <CardDescription className="font-bold">
                 Worst Performer
