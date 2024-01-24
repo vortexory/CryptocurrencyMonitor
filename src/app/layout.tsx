@@ -26,7 +26,7 @@ export default function RootLayout({
         <AuthProvider>
           <TanstackProvider>
             <WalletProvider>
-              <ThemeProvider attribute="class" defaultTheme="system">
+              <ThemeProvider attribute="class" defaultTheme="dark">
                 <Navigation />
                 {children}
               </ThemeProvider>

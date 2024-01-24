@@ -3,6 +3,7 @@
 import Wallet from "@/components/Wallet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PieChart } from "react-minimal-pie-chart";
+import { LineChart } from "@mui/x-charts/LineChart";
 import {
   Card,
   CardContent,
@@ -38,9 +39,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
+import { useTheme } from "next-themes";
 
 const page = () => {
   const { data } = useSession();
+
+  const { theme } = useTheme();
 
   const session = data as Session;
 
@@ -225,88 +229,83 @@ const page = () => {
         )}
 
         {finalCoins.length > 0 && (
-          <div className="max-h-80">
-            <Card>
-              <CardHeader>
-                <CardDescription className="font-bold">
-                  Allocation
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between gap-12">
-                  <PieChart
-                    data={coinsWithTotalValue}
-                    lineWidth={25}
-                    style={{ height: "250px", flex: 1 }}
-                  />
-                  <div className="flex-1 flex flex-col items-center gap-3">
-                    {finalCoins.map((coin, i) => {
-                      const totalVal = selectedWallet
-                        ? selectedWallet.totalValue
-                        : totalWalletsValue;
+          <Card>
+            <CardHeader>
+              <CardDescription className="font-bold">
+                Allocation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between gap-12">
+                <PieChart
+                  data={coinsWithTotalValue}
+                  lineWidth={25}
+                  style={{ height: "250px", flex: 1 }}
+                />
+                <div className="flex-1 flex flex-col items-center gap-3">
+                  {finalCoins.map((coin, i) => {
+                    const totalVal = selectedWallet
+                      ? selectedWallet.totalValue
+                      : totalWalletsValue;
 
-                      return (
-                        <div key={i} className="flex justify-between w-64">
-                          <div className="flex-container-center gap-2">
-                            <div
-                              className={`h-3 w-3 rounded-full`}
-                              style={{ backgroundColor: coin.color }}
-                            />
-                            <p className="text-sm font-bold">{coin.name}</p>
-                          </div>
-                          <p className="text-sm font-bold">
-                            {((coin.value / totalVal) * 100).toFixed(2)}%
-                          </p>
+                    return (
+                      <div key={i} className="flex justify-between w-64">
+                        <div className="flex-container-center gap-2">
+                          <div
+                            className={`h-3 w-3 rounded-full`}
+                            style={{ backgroundColor: coin.color }}
+                          />
+                          <p className="text-sm font-bold">{coin.name}</p>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <p className="text-sm font-bold">
+                          {((coin.value / totalVal) * 100).toFixed(2)}%
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         <div className="flex gap-6">
           <Card className="flex-1">
             <CardHeader>
               <CardDescription className="font-bold">
-                All-time profit
+                Wallet value over time
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <h5 className="mb-2 text-green-500">+$2,000</h5>
-              <p className="text-green-500 text-sm">+19%</p>
-            </CardContent>
-          </Card>
-
-          <Card className="flex-1">
-            <CardHeader>
-              <CardDescription className="font-bold">
-                Best Performer
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h5 className="mb-2">Ethereum ETH</h5>
-              <div className="flex-container-center gap-2">
-                <p className="text-green-500 text-sm">+$1,500</p>
-                <p className="text-green-500 text-sm">+165%</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="flex-1">
-            <CardHeader>
-              <CardDescription className="font-bold">
-                Worst Performer
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h5 className="mb-2">Render RNDR</h5>
-              <div className="flex-container-center gap-2">
-                <p className="text-red-500 text-sm">-$230</p>
-                <p className="text-red-500 text-sm">-6%</p>
-              </div>
+              <LineChart
+                xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+                series={[
+                  {
+                    data: [2, 5.5, 2, 8.5, 1.5, 5],
+                    area: true,
+                    color: "#7c39ed",
+                  },
+                ]}
+                height={300}
+                sx={{
+                  width: "100%",
+                  "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                    fill: theme === "dark" ? "#FFF" : "#000",
+                  },
+                  "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                    fill: theme === "dark" ? "#FFF" : "#000",
+                  },
+                  "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                    stroke: theme === "dark" ? "#FFF" : "#000",
+                  },
+                  "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                    stroke: theme === "dark" ? "#FFF" : "#000",
+                  },
+                  ".css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-tick": {
+                    stroke: theme === "dark" ? "#FFF" : "#000",
+                  },
+                }}
+              />
             </CardContent>
           </Card>
         </div>
