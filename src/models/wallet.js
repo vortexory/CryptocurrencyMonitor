@@ -9,6 +9,14 @@ const Transaction = new Schema({
     type: Number,
     required: true,
   },
+  newWalletValue: {
+    type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
 });
 
 const CoinSchema = new Schema({

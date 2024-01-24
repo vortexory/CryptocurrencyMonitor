@@ -39,9 +39,14 @@ export const POST = async (req) => {
       (coin) => coin.coinApiID === coinApiID
     );
 
+    const newTransactionValue = +(quantity * pricePerCoin).toFixed(2);
+    const newWalletValue = +currentWallet.totalValue + newTransactionValue;
+
     const newTransaction = {
       quantity,
       pricePerCoin,
+      newWalletValue,
+      type: "buy",
     };
 
     if (!existingCoin) {
@@ -56,9 +61,7 @@ export const POST = async (req) => {
       existingCoin.transactions.push(newTransaction);
     }
 
-    const newTransactionValue = +(quantity * pricePerCoin).toFixed(2);
-
-    currentWallet.totalValue = +currentWallet.totalValue + newTransactionValue;
+    currentWallet.totalValue = newWalletValue;
 
     await user.save();
 
