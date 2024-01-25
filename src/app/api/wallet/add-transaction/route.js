@@ -3,7 +3,7 @@ import User from "@/models/user";
 import mongoose from "mongoose";
 
 export const POST = async (req) => {
-  const { userId, walletId, coinName, coinApiID, quantity, pricePerCoin } =
+  const { userId, walletId, coinApiID, quantity, pricePerCoin, type } =
     await req.json();
 
   try {
@@ -15,8 +15,12 @@ export const POST = async (req) => {
 
     const user = await User.findById(userId);
 
-    if (!coinName || !coinApiID || !quantity || !pricePerCoin) {
+    if (!coinApiID || !quantity || !pricePerCoin || !type) {
       return new Response("Incomplete information", { status: 400 });
+    }
+
+    if (type !== "buy" && type !== "sell") {
+      return new Response("Invalid type", { status: 400 });
     }
 
     if (!user) {
@@ -39,29 +43,35 @@ export const POST = async (req) => {
       (coin) => coin.coinApiID === coinApiID
     );
 
+    if (!existingCoin) {
+      return new Response("Coin not found", { status: 404 });
+    }
+
+    if (existingCoin.totalQuantity < quantity && type === "sell") {
+      return new Response("Insufficient quantity available for sale", {
+        status: 400,
+      });
+    }
+
     const newTransactionValue = +(quantity * pricePerCoin).toFixed(2);
-    const newWalletValue = +currentWallet.totalValue + newTransactionValue;
+    const newWalletValue =
+      type === "buy"
+        ? +currentWallet.totalValue + newTransactionValue
+        : +currentWallet.totalValue - newTransactionValue;
 
     const newTransaction = {
       quantity,
       pricePerCoin,
       newWalletValue,
-      type: "buy",
+      type,
     };
 
-    if (!existingCoin) {
-      const newCoin = {
-        name: coinName,
-        coinApiID,
-        transactions: [newTransaction],
-        totalQuantity: quantity,
-      };
+    existingCoin.transactions.push(newTransaction);
 
-      currentWallet.coins.push(newCoin);
-    } else {
-      existingCoin.transactions.push(newTransaction);
-      existingCoin.totalQuantity = existingCoin.totalQuantity + quantity;
-    }
+    existingCoin.totalQuantity =
+      type === "buy"
+        ? existingCoin.totalQuantity + quantity
+        : existingCoin.totalQuantity - quantity;
 
     currentWallet.totalValue = newWalletValue;
 
@@ -73,7 +83,7 @@ export const POST = async (req) => {
   } catch (error) {
     console.log(error);
 
-    return new Response("Failed to add coin", {
+    return new Response("Failed to add transaction", {
       status: 500,
     });
   }
