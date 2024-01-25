@@ -1,4 +1,4 @@
-import { Coin, UserWallet } from "./interfaces";
+import { Coin, Transaction, UserWallet } from "./interfaces";
 
 export const formatAsCurrency = (price: number) => {
   return new Intl.NumberFormat("en-US", {
@@ -21,7 +21,7 @@ export const formatPrice = (price: number, asCurrency: boolean = true) => {
 
     let initialIndex = 0;
 
-    for (let i = 0; i <= decimals.length - 1; i++) {
+    for (let i = 0; i <= decimals?.length - 1; i++) {
       if (decimals[i] === "0") {
         initialIndex += 1;
       } else {
@@ -36,28 +36,39 @@ export const formatPrice = (price: number, asCurrency: boolean = true) => {
   }
 };
 
-export const calculateAvgBuyPrice = (
-  transactions: {
-    quantity: number;
-    pricePerCoin: number;
-  }[]
-) => {
-  const costArray = transactions.map(
-    (transaction) => transaction.pricePerCoin * transaction.quantity
-  );
-  const quantityArray = transactions.map(
-    (transactions) => transactions.quantity
+export const calculateAvgPrices = (transactions: Transaction[]) => {
+  const buyTransactions = transactions.filter(
+    (transaction) => transaction.type === "buy"
   );
 
-  const totalCost = costArray.reduce((acc, currentVal) => acc + currentVal, 0);
-  const totalQuantity = quantityArray.reduce(
-    (acc, currentVal) => acc + currentVal,
-    0
+  const sellTransactions = transactions.filter(
+    (transaction) => transaction.type === "sell"
   );
 
-  const avgBuyPrice = formatPrice(totalCost / totalQuantity);
+  const calculateAvgPrice = (filteredTransactions: Transaction[]) => {
+    const costArray = filteredTransactions.map(
+      (transaction) => transaction.pricePerCoin * transaction.quantity
+    );
+    const quantityArray = filteredTransactions.map(
+      (transaction) => transaction.quantity
+    );
 
-  return avgBuyPrice;
+    const totalCost = costArray.reduce(
+      (acc, currentVal) => acc + currentVal,
+      0
+    );
+    const totalQuantity = quantityArray.reduce(
+      (acc, currentVal) => acc + currentVal,
+      0
+    );
+
+    return formatPrice(totalCost / totalQuantity);
+  };
+
+  const avgBuyPrice = calculateAvgPrice(buyTransactions);
+  const avgSellPrice = calculateAvgPrice(sellTransactions);
+
+  return { avgBuyPrice, avgSellPrice };
 };
 
 export const aggregateCoins = (wallets: UserWallet[]) => {

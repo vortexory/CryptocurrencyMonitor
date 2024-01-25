@@ -30,7 +30,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   aggregateCoins,
-  calculateAvgBuyPrice,
+  calculateAvgPrices,
   calculateCoinValue,
   formatPrice,
   getColorByIndex,
@@ -66,6 +66,8 @@ const page = () => {
     enabled: !!session?.user?.id,
     queryKey: ["wallets"],
   });
+
+  console.log(selectedWallet);
 
   const totalWalletsValue =
     userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
@@ -333,36 +335,38 @@ const page = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {coinsToDisplay.map((coin) => (
-                <TableRow key={coin._id}>
-                  <TableCell>{coin.name}</TableCell>
-                  <TableCell className="text-right">
-                    {coin.transactions
-                      .map(
-                        (transaction: {
-                          quantity: number;
-                          pricePerCoin: number;
-                        }) => transaction.quantity
-                      )
-                      .reduce(
-                        (acc: number, currentVal: number) => acc + currentVal,
-                        0
-                      )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {calculateAvgBuyPrice(coin.transactions)}
-                  </TableCell>
-                  {selectedWallet && (
+              {coinsToDisplay.map((coin) => {
+                return (
+                  <TableRow key={coin._id}>
+                    <TableCell>{coin.name}</TableCell>
                     <TableCell className="text-right">
-                      <ActionsCell
-                        handleDeleteCoin={handleDeleteCoin}
-                        walletId={selectedWallet._id}
-                        coinApiID={coin.coinApiID}
-                      />
+                      {coin.transactions
+                        .map(
+                          (transaction: {
+                            quantity: number;
+                            pricePerCoin: number;
+                          }) => transaction.quantity
+                        )
+                        .reduce(
+                          (acc: number, currentVal: number) => acc + currentVal,
+                          0
+                        )}
                     </TableCell>
-                  )}
-                </TableRow>
-              ))}
+                    <TableCell className="text-right">
+                      {calculateAvgPrices(coin.transactions).avgBuyPrice}
+                    </TableCell>
+                    {selectedWallet && (
+                      <TableCell className="text-right">
+                        <ActionsCell
+                          handleDeleteCoin={handleDeleteCoin}
+                          walletId={selectedWallet._id}
+                          coinApiID={coin.coinApiID}
+                        />
+                      </TableCell>
+                    )}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
