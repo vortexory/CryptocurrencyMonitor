@@ -79,6 +79,7 @@ export interface Coin {
   name: string;
   transactions: Transaction[];
   _id: string;
+  totalQuantity: number;
 }
 
 export interface UserWallet {

@@ -32,6 +32,11 @@ const CoinSchema = new Schema({
     type: [Transaction],
     default: [],
   },
+  totalQuantity: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 const WalletSchema = new Schema({
