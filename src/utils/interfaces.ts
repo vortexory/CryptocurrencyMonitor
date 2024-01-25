@@ -66,10 +66,12 @@ export interface Session {
   } | null;
 }
 
-interface Transaction {
+export interface Transaction {
   _id: string;
   quantity: number;
   pricePerCoin: number;
+  newWalletValue: number;
+  type: "buy" | "sell";
 }
 
 export interface Coin {
