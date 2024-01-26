@@ -329,6 +329,8 @@ const page = () => {
                 <TableHead>Name</TableHead>
                 <TableHead className="text-right">Quantity</TableHead>
                 <TableHead className="text-right">Avg. Buy Price</TableHead>
+                <TableHead className="text-right">Avg. Sell Price</TableHead>
+
                 {selectedWallet && (
                   <TableHead className="text-right">Actions</TableHead>
                 )}
@@ -340,20 +342,14 @@ const page = () => {
                   <TableRow key={coin._id}>
                     <TableCell>{coin.name}</TableCell>
                     <TableCell className="text-right">
-                      {coin.transactions
-                        .map(
-                          (transaction: {
-                            quantity: number;
-                            pricePerCoin: number;
-                          }) => transaction.quantity
-                        )
-                        .reduce(
-                          (acc: number, currentVal: number) => acc + currentVal,
-                          0
-                        )}
+                      {coin.totalQuantity}
                     </TableCell>
                     <TableCell className="text-right">
                       {calculateAvgPrices(coin.transactions).avgBuyPrice}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {calculateAvgPrices(coin.transactions).avgSellPrice ||
+                        "-"}
                     </TableCell>
                     {selectedWallet && (
                       <TableCell className="text-right">
@@ -361,6 +357,9 @@ const page = () => {
                           handleDeleteCoin={handleDeleteCoin}
                           walletId={selectedWallet._id}
                           coinApiID={coin.coinApiID}
+                          selectedWallet={selectedWallet}
+                          setSelectedWallet={setSelectedWallet}
+                          name={coin.name}
                         />
                       </TableCell>
                     )}

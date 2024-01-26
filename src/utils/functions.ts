@@ -46,6 +46,8 @@ export const calculateAvgPrices = (transactions: Transaction[]) => {
   );
 
   const calculateAvgPrice = (filteredTransactions: Transaction[]) => {
+    if (filteredTransactions.length === 0) return 0;
+
     const costArray = filteredTransactions.map(
       (transaction) => transaction.pricePerCoin * transaction.quantity
     );
