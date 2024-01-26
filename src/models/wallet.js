@@ -1,23 +1,26 @@
 import { Schema } from "mongoose";
 
-const Transaction = new Schema({
-  quantity: {
-    type: Number,
-    required: true,
+const Transaction = new Schema(
+  {
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    pricePerCoin: {
+      type: Number,
+      required: true,
+    },
+    newWalletValue: {
+      type: Number,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
   },
-  pricePerCoin: {
-    type: Number,
-    required: true,
-  },
-  newWalletValue: {
-    type: Number,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 const CoinSchema = new Schema({
   coinApiID: {
