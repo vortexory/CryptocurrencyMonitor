@@ -36,7 +36,6 @@ import {
   getColorByIndex,
 } from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
 import { useTheme } from "next-themes";
@@ -139,6 +138,17 @@ const page = () => {
       : null;
 
   const finalCoins = others ? topCoins.concat(others) : topCoins;
+
+  const allTransactions = coinsToDisplay
+    .flatMap((coinObject) => coinObject.transactions)
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+  const allTransactionsDates = allTransactions.map(
+    (transaction) => new Date(transaction.createdAt)
+  );
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -270,47 +280,6 @@ const page = () => {
             </CardContent>
           </Card>
         )}
-
-        <div className="flex gap-6">
-          <Card className="flex-1">
-            <CardHeader>
-              <CardDescription className="font-bold">
-                Wallet value over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <LineChart
-                xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-                series={[
-                  {
-                    data: [2, 5.5, 2, 8.5, 1.5, 5],
-                    area: true,
-                    color: "#7c39ed",
-                  },
-                ]}
-                height={300}
-                sx={{
-                  width: "100%",
-                  "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                    fill: theme === "dark" ? "#FFF" : "#000",
-                  },
-                  "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                    fill: theme === "dark" ? "#FFF" : "#000",
-                  },
-                  "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-                    stroke: theme === "dark" ? "#FFF" : "#000",
-                  },
-                  "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                    stroke: theme === "dark" ? "#FFF" : "#000",
-                  },
-                  ".css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-tick": {
-                    stroke: theme === "dark" ? "#FFF" : "#000",
-                  },
-                }}
-              />
-            </CardContent>
-          </Card>
-        </div>
 
         <div className="">
           <h5 className="mb-2">Assets</h5>
