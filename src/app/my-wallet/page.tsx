@@ -3,7 +3,6 @@
 import Wallet from "@/components/Wallet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PieChart } from "react-minimal-pie-chart";
-import { LineChart } from "@mui/x-charts/LineChart";
 import {
   Card,
   CardContent,
@@ -43,8 +42,6 @@ import { useTheme } from "next-themes";
 const page = () => {
   const { data } = useSession();
 
-  const { theme } = useTheme();
-
   const session = data as Session;
 
   const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
@@ -65,11 +62,6 @@ const page = () => {
     enabled: !!session?.user?.id,
     queryKey: ["wallets"],
   });
-
-  console.log(selectedWallet);
-
-  const totalWalletsValue =
-    userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
 
   const { mutateAsync } = useMutation({
     mutationFn: (coin: {
@@ -96,21 +88,8 @@ const page = () => {
     },
   });
 
-  const handleDeleteCoin = async (walletId: string, coinApiID: number) => {
-    try {
-      if (session?.user?.id) {
-        const coinData = {
-          userId: session.user.id,
-          walletId,
-          coinApiID,
-        };
-
-        await mutateAsync(coinData);
-      }
-    } catch (error) {
-      console.error("Error deleting coin", error);
-    }
-  };
+  const totalWalletsValue =
+    userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
 
   const coinsToDisplay = selectedWallet
     ? selectedWallet.coins
@@ -139,16 +118,21 @@ const page = () => {
 
   const finalCoins = others ? topCoins.concat(others) : topCoins;
 
-  const allTransactions = coinsToDisplay
-    .flatMap((coinObject) => coinObject.transactions)
-    .sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
+  const handleDeleteCoin = async (walletId: string, coinApiID: number) => {
+    try {
+      if (session?.user?.id) {
+        const coinData = {
+          userId: session.user.id,
+          walletId,
+          coinApiID,
+        };
 
-  const allTransactionsDates = allTransactions.map(
-    (transaction) => new Date(transaction.createdAt)
-  );
+        await mutateAsync(coinData);
+      }
+    } catch (error) {
+      console.error("Error deleting coin", error);
+    }
+  };
 
   useEffect(() => {
     if (session?.user?.id) {
