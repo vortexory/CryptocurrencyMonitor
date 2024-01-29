@@ -37,7 +37,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
-import { useTheme } from "next-themes";
+import Transactions from "@/components/Transactions";
+import { useWallet } from "@/providers/WalletProvider";
 
 const page = () => {
   const { data } = useSession();
@@ -46,6 +47,8 @@ const page = () => {
 
   const [selectedWallet, setSelectedWallet] = useState<UserWallet | null>(null);
   const [walletsValueGoal, setWalletsValueGoal] = useState<number>(0);
+
+  const { transactionsView, setTransactionsView } = useWallet();
 
   const queryClient = useQueryClient();
 
@@ -134,6 +137,14 @@ const page = () => {
     }
   };
 
+  const handleChangeWallet = (wallet: UserWallet | null) => {
+    setSelectedWallet(wallet);
+    setTransactionsView({
+      open: false,
+      transactions: [],
+    });
+  };
+
   useEffect(() => {
     if (session?.user?.id) {
       setWalletsValueGoal(session.user.walletsValueGoal);
@@ -147,7 +158,7 @@ const page = () => {
           walletName="Overview"
           selected={!selectedWallet}
           totalValue={formatPrice(totalWalletsValue)}
-          onClick={() => setSelectedWallet(null)}
+          onClick={() => handleChangeWallet(null)}
         />
         <div className="h-[1px] bg-foreground" />
 
@@ -163,7 +174,7 @@ const page = () => {
                     key={wallet._id}
                     walletName={wallet.name}
                     totalValue={formatPrice(wallet.totalValue)}
-                    onClick={() => setSelectedWallet(wallet)}
+                    onClick={() => handleChangeWallet(wallet)}
                     selected={wallet._id === selectedWallet?._id}
                   />
                 ))}
@@ -174,154 +185,163 @@ const page = () => {
         )}
       </div>
       <div className="flex-[4] flex flex-col gap-12">
-        <div className="flex justify-between gap-12">
-          <div>
-            <div className="flex-container-center gap-2">
-              <Avatar>
-                <AvatarFallback>
-                  {selectedWallet ? selectedWallet.name.charAt(0) : "O"}
-                </AvatarFallback>
-              </Avatar>
-              <p className="text-sm text-muted-foreground font-bold">
-                {selectedWallet ? selectedWallet.name : "Overview"}
-              </p>
-            </div>
-            <h3 className="mt-3">
-              {selectedWallet
-                ? formatPrice(selectedWallet.totalValue)
-                : formatPrice(totalWalletsValue)}
-            </h3>
-          </div>
-
-          <div className="w-2/3 flex flex-col gap-3">
-            <p className="text-sm text-muted-foreground font-bold">
-              {walletsValueGoal
-                ? `Progress towards your goal - ${formatPrice(
-                    walletsValueGoal
-                  )}`
-                : "You haven't set a goal yet"}
-            </p>
-            <Progress
-              value={
-                walletsValueGoal
-                  ? Math.min(
-                      +((totalWalletsValue / walletsValueGoal) * 100),
-                      100
-                    )
-                  : 0
-              }
-            />
-            <AddEditGoalDialog
-              setWalletsValueGoal={setWalletsValueGoal}
-              walletsValueGoal={walletsValueGoal}
-            />
-          </div>
-        </div>
-        {selectedWallet && (
-          <DeletePortfolioDialog
-            selectedWallet={selectedWallet}
-            setSelectedWallet={setSelectedWallet}
-          />
-        )}
-
-        {finalCoins.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardDescription className="font-bold">
-                Allocation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between gap-12">
-                <PieChart
-                  data={coinsWithTotalValue}
-                  lineWidth={25}
-                  style={{ height: "250px", flex: 1 }}
-                />
-                <div className="flex-1 flex flex-col items-center gap-3">
-                  {finalCoins.map((coin, i) => {
-                    const totalVal = selectedWallet
-                      ? selectedWallet.totalValue
-                      : totalWalletsValue;
-
-                    return (
-                      <div key={i} className="flex justify-between w-64">
-                        <div className="flex-container-center gap-2">
-                          <div
-                            className={`h-3 w-3 rounded-full`}
-                            style={{ backgroundColor: coin.color }}
-                          />
-                          <p className="text-sm font-bold">{coin.name}</p>
-                        </div>
-                        <p className="text-sm font-bold">
-                          {((coin.value / totalVal) * 100).toFixed(2)}%
-                        </p>
-                      </div>
-                    );
-                  })}
+        {transactionsView.open ? (
+          <Transactions transactions={transactionsView.transactions} />
+        ) : (
+          <>
+            <div className="flex justify-between gap-12">
+              <div>
+                <div className="flex-container-center gap-2">
+                  <Avatar>
+                    <AvatarFallback>
+                      {selectedWallet ? selectedWallet.name.charAt(0) : "O"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-sm text-muted-foreground font-bold">
+                    {selectedWallet ? selectedWallet.name : "Overview"}
+                  </p>
                 </div>
+                <h3 className="mt-3">
+                  {selectedWallet
+                    ? formatPrice(selectedWallet.totalValue)
+                    : formatPrice(totalWalletsValue)}
+                </h3>
               </div>
-            </CardContent>
-          </Card>
-        )}
 
-        <div className="">
-          <h5 className="mb-2">Assets</h5>
-
-          <Table>
-            <TableCaption>
-              {selectedWallet && (
-                <AddCoinDialog
-                  walletId={selectedWallet?._id}
-                  setSelectedWallet={setSelectedWallet}
+              <div className="w-2/3 flex flex-col gap-3">
+                <p className="text-sm text-muted-foreground font-bold">
+                  {walletsValueGoal
+                    ? `Progress towards your goal - ${formatPrice(
+                        walletsValueGoal
+                      )}`
+                    : "You haven't set a goal yet"}
+                </p>
+                <Progress
+                  value={
+                    walletsValueGoal
+                      ? Math.min(
+                          +((totalWalletsValue / walletsValueGoal) * 100),
+                          100
+                        )
+                      : 0
+                  }
                 />
-              )}
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead className="text-right">Quantity</TableHead>
-                <TableHead className="text-right">Avg. Buy Price</TableHead>
-                <TableHead className="text-right">Avg. Sell Price</TableHead>
+                <AddEditGoalDialog
+                  setWalletsValueGoal={setWalletsValueGoal}
+                  walletsValueGoal={walletsValueGoal}
+                />
+              </div>
+            </div>
+            {selectedWallet && (
+              <DeletePortfolioDialog
+                selectedWallet={selectedWallet}
+                setSelectedWallet={setSelectedWallet}
+              />
+            )}
 
-                {selectedWallet && (
-                  <TableHead className="text-right">Actions</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {coinsToDisplay.map((coin) => {
-                return (
-                  <TableRow key={coin._id}>
-                    <TableCell>{coin.name}</TableCell>
-                    <TableCell className="text-right">
-                      {coin.totalQuantity}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {calculateAvgPrices(coin.transactions).avgBuyPrice}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {calculateAvgPrices(coin.transactions).avgSellPrice ||
-                        "-"}
-                    </TableCell>
+            {finalCoins.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardDescription className="font-bold">
+                    Allocation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between gap-12">
+                    <PieChart
+                      data={coinsWithTotalValue}
+                      lineWidth={25}
+                      style={{ height: "250px", flex: 1 }}
+                    />
+                    <div className="flex-1 flex flex-col items-center gap-3">
+                      {finalCoins.map((coin, i) => {
+                        const totalVal = selectedWallet
+                          ? selectedWallet.totalValue
+                          : totalWalletsValue;
+
+                        return (
+                          <div key={i} className="flex justify-between w-64">
+                            <div className="flex-container-center gap-2">
+                              <div
+                                className={`h-3 w-3 rounded-full`}
+                                style={{ backgroundColor: coin.color }}
+                              />
+                              <p className="text-sm font-bold">{coin.name}</p>
+                            </div>
+                            <p className="text-sm font-bold">
+                              {((coin.value / totalVal) * 100).toFixed(2)}%
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="">
+              <h5 className="mb-2">Assets</h5>
+
+              <Table>
+                <TableCaption>
+                  {selectedWallet && (
+                    <AddCoinDialog
+                      walletId={selectedWallet?._id}
+                      setSelectedWallet={setSelectedWallet}
+                    />
+                  )}
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right">Avg. Buy Price</TableHead>
+                    <TableHead className="text-right">
+                      Avg. Sell Price
+                    </TableHead>
+
                     {selectedWallet && (
-                      <TableCell className="text-right">
-                        <ActionsCell
-                          handleDeleteCoin={handleDeleteCoin}
-                          walletId={selectedWallet._id}
-                          coinApiID={coin.coinApiID}
-                          selectedWallet={selectedWallet}
-                          setSelectedWallet={setSelectedWallet}
-                          name={coin.name}
-                        />
-                      </TableCell>
+                      <TableHead className="text-right">Actions</TableHead>
                     )}
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
+                </TableHeader>
+                <TableBody>
+                  {coinsToDisplay.map((coin) => {
+                    return (
+                      <TableRow key={coin._id}>
+                        <TableCell>{coin.name}</TableCell>
+                        <TableCell className="text-right">
+                          {coin.totalQuantity}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {calculateAvgPrices(coin.transactions).avgBuyPrice}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {calculateAvgPrices(coin.transactions).avgSellPrice ||
+                            "-"}
+                        </TableCell>
+                        {selectedWallet && (
+                          <TableCell className="text-right">
+                            <ActionsCell
+                              handleDeleteCoin={handleDeleteCoin}
+                              walletId={selectedWallet._id}
+                              coinApiID={coin.coinApiID}
+                              selectedWallet={selectedWallet}
+                              setSelectedWallet={setSelectedWallet}
+                              name={coin.name}
+                              transactions={coin.transactions}
+                            />
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

@@ -9,8 +9,9 @@ import {
 import { Button } from "./ui/button";
 import { MoreVertical } from "lucide-react";
 import AddTransactionDialog from "./AddTransactionDialog";
-import { UserWallet } from "@/utils/interfaces";
+import { Transaction, UserWallet } from "@/utils/interfaces";
 import { Dispatch, SetStateAction, useState } from "react";
+import { useWallet } from "@/providers/WalletProvider";
 
 const ActionsCell = ({
   handleDeleteCoin,
@@ -19,6 +20,7 @@ const ActionsCell = ({
   selectedWallet,
   setSelectedWallet,
   name,
+  transactions,
 }: {
   handleDeleteCoin: (walletId: string, coinApiID: number) => Promise<void>;
   walletId: string;
@@ -26,9 +28,12 @@ const ActionsCell = ({
   selectedWallet: UserWallet | null;
   setSelectedWallet: Dispatch<SetStateAction<UserWallet | null>>;
   name: string;
+  transactions: Transaction[];
 }) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
   const [isSellDialogOpen, setIsSellDialogOpen] = useState<boolean>(false);
+
+  const { setTransactionsView } = useWallet();
 
   return (
     <>
@@ -53,7 +58,10 @@ const ActionsCell = ({
             Sell coins
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setTransactionsView({ open: true, transactions })}
+          >
             Transactions
           </DropdownMenuItem>
           <DropdownMenuItem

@@ -119,3 +119,18 @@ export const getColorByIndex = (index: number) => {
   ];
   return colors[index % colors.length];
 };
+
+export const formatDate = (createdAt: string) => {
+  const date = new Date(createdAt);
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  } as Intl.DateTimeFormatOptions;
+
+  const formattedDate = date.toLocaleString("en-US", options);
+  return formattedDate;
+};

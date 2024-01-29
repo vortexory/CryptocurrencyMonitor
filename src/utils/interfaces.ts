@@ -74,6 +74,13 @@ export interface Transaction {
   pricePerCoin: number;
   newWalletValue: number;
   type: TransactionType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TransactionsView {
+  open: boolean;
+  transactions: Transaction[];
 }
 
 export interface Coin {

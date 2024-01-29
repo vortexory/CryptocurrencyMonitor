@@ -1,10 +1,19 @@
 "use client";
 
-import { CoinData } from "@/utils/interfaces";
-import { createContext, useContext, useState, ReactNode } from "react";
+import { CoinData, TransactionsView } from "@/utils/interfaces";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
 
 type WalletContext = {
   selectedCoin: CoinData | null;
+  transactionsView: TransactionsView;
+  setTransactionsView: Dispatch<SetStateAction<TransactionsView>>;
   selectCoin: (coin: CoinData) => void;
   unselectCoin: () => void;
 };
@@ -27,6 +36,10 @@ type WalletProviderProps = {
 
 export function WalletProvider({ children }: WalletProviderProps) {
   const [selectedCoin, setSelectedCoin] = useState<CoinData | null>(null);
+  const [transactionsView, setTransactionsView] = useState<TransactionsView>({
+    open: false,
+    transactions: [],
+  });
 
   const selectCoin = (coin: CoinData) => {
     setSelectedCoin(coin);
@@ -40,6 +53,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
     <WalletContext.Provider
       value={{
         selectedCoin,
+        transactionsView,
+        setTransactionsView,
         selectCoin,
         unselectCoin,
       }}
