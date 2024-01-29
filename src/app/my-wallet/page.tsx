@@ -141,7 +141,7 @@ const page = () => {
     setSelectedWallet(wallet);
     setTransactionsView({
       open: false,
-      transactions: [],
+      coin: null,
     });
   };
 
@@ -186,7 +186,12 @@ const page = () => {
       </div>
       <div className="flex-[4] flex flex-col gap-12">
         {transactionsView.open ? (
-          <Transactions transactions={transactionsView.transactions} />
+          <Transactions
+            transactions={transactionsView.coin?.transactions ?? []}
+            quantity={transactionsView.coin?.quantity ?? 0}
+            name={transactionsView.coin?.name ?? ""}
+            avgBuyPrice={transactionsView.coin?.avgBuyPrice ?? 0}
+          />
         ) : (
           <>
             <div className="flex justify-between gap-12">
@@ -331,6 +336,11 @@ const page = () => {
                               setSelectedWallet={setSelectedWallet}
                               name={coin.name}
                               transactions={coin.transactions}
+                              quantity={coin.totalQuantity}
+                              avgBuyPrice={
+                                calculateAvgPrices(coin.transactions)
+                                  .avgBuyPrice
+                              }
                             />
                           </TableCell>
                         )}

@@ -80,7 +80,12 @@ export interface Transaction {
 
 export interface TransactionsView {
   open: boolean;
-  transactions: Transaction[];
+  coin: {
+    quantity: number;
+    transactions: Transaction[];
+    name: string;
+    avgBuyPrice: string | number;
+  } | null;
 }
 
 export interface Coin {

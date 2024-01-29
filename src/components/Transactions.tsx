@@ -15,19 +15,33 @@ import {
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { formatDate } from "@/utils/functions";
 
-const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
+const Transactions = ({
+  transactions,
+  quantity,
+  name,
+  avgBuyPrice,
+}: {
+  transactions: Transaction[];
+  quantity: number;
+  name: string;
+  avgBuyPrice: string | number;
+}) => {
   const { setTransactionsView } = useWallet();
 
   useEffect(() => {
     setTransactionsView({
       open: true,
-      transactions,
+      coin: {
+        transactions,
+        quantity,
+        name,
+        avgBuyPrice,
+      },
     });
-
     return () =>
       setTransactionsView({
         open: false,
-        transactions: [],
+        coin: null,
       });
   }, []);
 
@@ -39,7 +53,7 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
         onClick={() =>
           setTransactionsView({
             open: false,
-            transactions: [],
+            coin: null,
           })
         }
       >
@@ -50,7 +64,9 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
           <CardHeader>
             <CardDescription className="font-bold">Quantity</CardDescription>
           </CardHeader>
-          <CardContent>Test</CardContent>
+          <CardContent className="text-2xl">
+            {quantity} {name}
+          </CardContent>
         </Card>
         <Card className="flex-1">
           <CardHeader>
@@ -58,7 +74,7 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
               Avg. buy price
             </CardDescription>
           </CardHeader>
-          <CardContent>Test</CardContent>
+          <CardContent className="text-2xl">{avgBuyPrice}</CardContent>
         </Card>
         <Card className="flex-1">
           <CardHeader>
@@ -66,7 +82,7 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
               Total profit / loss
             </CardDescription>
           </CardHeader>
-          <CardContent>Test</CardContent>
+          <CardContent className="text-2xl">$50,000</CardContent>
         </Card>
       </div>
 
@@ -79,7 +95,7 @@ const Transactions = ({ transactions }: { transactions: Transaction[] }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.map((transaction) => (
+          {transactions?.map((transaction) => (
             <TableRow key={transaction._id}>
               <TableCell>
                 <div className="flex-container-center gap-4">

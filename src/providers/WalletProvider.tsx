@@ -38,7 +38,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const [selectedCoin, setSelectedCoin] = useState<CoinData | null>(null);
   const [transactionsView, setTransactionsView] = useState<TransactionsView>({
     open: false,
-    transactions: [],
+    coin: null,
   });
 
   const selectCoin = (coin: CoinData) => {

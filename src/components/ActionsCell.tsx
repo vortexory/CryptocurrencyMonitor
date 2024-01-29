@@ -21,6 +21,8 @@ const ActionsCell = ({
   setSelectedWallet,
   name,
   transactions,
+  quantity,
+  avgBuyPrice,
 }: {
   handleDeleteCoin: (walletId: string, coinApiID: number) => Promise<void>;
   walletId: string;
@@ -29,6 +31,8 @@ const ActionsCell = ({
   setSelectedWallet: Dispatch<SetStateAction<UserWallet | null>>;
   name: string;
   transactions: Transaction[];
+  quantity: number;
+  avgBuyPrice: string | number;
 }) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
   const [isSellDialogOpen, setIsSellDialogOpen] = useState<boolean>(false);
@@ -60,7 +64,17 @@ const ActionsCell = ({
 
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => setTransactionsView({ open: true, transactions })}
+            onClick={() =>
+              setTransactionsView({
+                open: true,
+                coin: {
+                  transactions,
+                  quantity,
+                  name,
+                  avgBuyPrice,
+                },
+              })
+            }
           >
             Transactions
           </DropdownMenuItem>
