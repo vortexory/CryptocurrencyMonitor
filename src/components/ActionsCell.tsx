@@ -32,7 +32,7 @@ const ActionsCell = ({
   name: string;
   transactions: Transaction[];
   quantity: number;
-  avgBuyPrice: string | number;
+  avgBuyPrice: number;
 }) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
   const [isSellDialogOpen, setIsSellDialogOpen] = useState<boolean>(false);
@@ -72,6 +72,7 @@ const ActionsCell = ({
                   quantity,
                   name,
                   avgBuyPrice,
+                  coinApiID,
                 },
               })
             }

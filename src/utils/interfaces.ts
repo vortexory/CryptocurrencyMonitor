@@ -84,7 +84,8 @@ export interface TransactionsView {
     quantity: number;
     transactions: Transaction[];
     name: string;
-    avgBuyPrice: string | number;
+    avgBuyPrice: number;
+    coinApiID: number;
   } | null;
 }
 

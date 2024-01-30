@@ -191,6 +191,7 @@ const page = () => {
             quantity={transactionsView.coin?.quantity ?? 0}
             name={transactionsView.coin?.name ?? ""}
             avgBuyPrice={transactionsView.coin?.avgBuyPrice ?? 0}
+            coinApiID={transactionsView.coin?.coinApiID ?? 0}
           />
         ) : (
           <>
@@ -320,11 +321,14 @@ const page = () => {
                           {coin.totalQuantity}
                         </TableCell>
                         <TableCell className="text-right">
-                          {calculateAvgPrices(coin.transactions).avgBuyPrice}
+                          {formatPrice(
+                            calculateAvgPrices(coin.transactions).avgBuyPrice
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
-                          {calculateAvgPrices(coin.transactions).avgSellPrice ||
-                            "-"}
+                          {formatPrice(
+                            calculateAvgPrices(coin.transactions).avgSellPrice
+                          ) || "-"}
                         </TableCell>
                         {selectedWallet && (
                           <TableCell className="text-right">
