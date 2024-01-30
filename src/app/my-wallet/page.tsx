@@ -326,9 +326,12 @@ const page = () => {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          {formatPrice(
-                            calculateAvgPrices(coin.transactions).avgSellPrice
-                          ) || "-"}
+                          {calculateAvgPrices(coin.transactions).avgSellPrice
+                            ? formatPrice(
+                                calculateAvgPrices(coin.transactions)
+                                  .avgSellPrice
+                              )
+                            : "-"}
                         </TableCell>
                         {selectedWallet && (
                           <TableCell className="text-right">

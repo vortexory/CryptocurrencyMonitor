@@ -159,7 +159,7 @@ const Transactions = ({
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                {transaction.pricePerCoin.toFixed(2)}
+                {formatPrice(transaction.pricePerCoin)}
               </TableCell>
               <TableCell className="text-right">
                 {transaction.quantity}
