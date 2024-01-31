@@ -45,7 +45,7 @@ const Navigation = () => {
 
   return (
     <div className="wrapper flex-container-center justify-between">
-      <div className="flex-container-center gap-4">
+      <div className="flex-container-center gap-6">
         <Link
           href="/"
           className="border-b border-transparent hover:border-foreground"
@@ -53,10 +53,10 @@ const Navigation = () => {
           Home
         </Link>
         <Link
-          href="/my-wallet"
+          href="/portfolio-tracker"
           className="border-b border-transparent hover:border-foreground"
         >
-          My Wallet
+          Portfolio Tracker
         </Link>
       </div>
       <div className="flex-container-center gap-4">

@@ -80,11 +80,9 @@ const DeletePortfolioDialog = ({
       </Button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            Are you sure you want to delete {selectedWallet?.name}?
-          </DialogTitle>
+          <DialogTitle>Delete portfolio</DialogTitle>
         </DialogHeader>
-
+        Are you sure you want to delete {selectedWallet?.name}?
         <DialogFooter className="mt-3">
           <Button
             type="button"
