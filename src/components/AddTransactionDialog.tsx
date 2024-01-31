@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   SelectedCoinInfo,
   Session,
@@ -54,6 +54,15 @@ const AddTransactionDialog = ({
   const [selectedCoinInfo, setSelectedCoinInfo] = useState<SelectedCoinInfo>({
     quantity: 0,
     pricePerCoin: 0,
+  });
+
+  const { data: coin, isLoading } = useQuery({
+    queryFn: async () => {
+      const response = await axios.get(`/api/coin/get-value/${coinApiID}`);
+
+      return response.data;
+    },
+    queryKey: ["coin"],
   });
 
   const { mutateAsync, isPending } = useMutation({
@@ -118,10 +127,17 @@ const AddTransactionDialog = ({
   };
 
   useEffect(() => {
+    if (coin) {
+      setSelectedCoinInfo((prev) => ({
+        ...prev,
+        pricePerCoin: coin.liveValue,
+      }));
+    }
+
     if (!open) {
       resetDialogState();
     }
-  }, [open]);
+  }, [coin, open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -129,62 +145,66 @@ const AddTransactionDialog = ({
         <DialogHeader>
           <DialogTitle>Add a coin</DialogTitle>
         </DialogHeader>
-        <div className="my-2 flex flex-col gap-3">
-          <>
-            <Input value={name} disabled />
-            <div className="flex-container-center gap-2">
-              <div className="flex flex-col gap-2 flex-1">
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  placeholder="0.00"
-                  value={selectedCoinInfo.quantity}
-                  onChange={(e) =>
-                    setSelectedCoinInfo((prev) => ({
-                      ...prev,
-                      quantity: Number(e.target.value),
-                    }))
-                  }
-                />
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="my-2 flex flex-col gap-3">
+            <>
+              <Input value={name} disabled />
+              <div className="flex-container-center gap-2">
+                <div className="flex flex-col gap-2 flex-1">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    placeholder="0.00"
+                    value={selectedCoinInfo.quantity}
+                    onChange={(e) =>
+                      setSelectedCoinInfo((prev) => ({
+                        ...prev,
+                        quantity: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <Label htmlFor="ppc">Price Per Coin</Label>
+                  <Input
+                    id="ppc"
+                    type="number"
+                    placeholder="0.00"
+                    value={selectedCoinInfo.pricePerCoin.toFixed(2)}
+                    onChange={(e) =>
+                      setSelectedCoinInfo((prev) => ({
+                        ...prev,
+                        pricePerCoin: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-2 flex-1">
-                <Label htmlFor="ppc">Price Per Coin</Label>
-                <Input
-                  id="ppc"
-                  type="number"
-                  placeholder="0.00"
-                  value={selectedCoinInfo.pricePerCoin.toFixed(2)}
-                  onChange={(e) =>
-                    setSelectedCoinInfo((prev) => ({
-                      ...prev,
-                      pricePerCoin: Number(e.target.value),
-                    }))
-                  }
-                />
+              <div className="bg-secondary p-3 rounded-md">
+                <h6 className="font-bold mb-1">Total Spent</h6>
+                <p>
+                  {formatPrice(
+                    selectedCoinInfo.quantity * selectedCoinInfo.pricePerCoin
+                  )}
+                </p>
               </div>
-            </div>
-            <div className="bg-secondary p-3 rounded-md">
-              <h6 className="font-bold mb-1">Total Spent</h6>
-              <p>
-                {formatPrice(
-                  selectedCoinInfo.quantity * selectedCoinInfo.pricePerCoin
-                )}
-              </p>
-            </div>
-            <Button
-              type="button"
-              disabled={
-                !selectedCoinInfo.quantity ||
-                !selectedCoinInfo.pricePerCoin ||
-                isPending
-              }
-              onClick={handleAddTransaction}
-            >
-              Add Transaction
-            </Button>
-          </>
-        </div>
+              <Button
+                type="button"
+                disabled={
+                  !selectedCoinInfo.quantity ||
+                  !selectedCoinInfo.pricePerCoin ||
+                  isPending
+                }
+                onClick={handleAddTransaction}
+              >
+                Add Transaction
+              </Button>
+            </>
+          </div>
+        )}
 
         <DialogFooter className="sm:justify-end">
           <Button

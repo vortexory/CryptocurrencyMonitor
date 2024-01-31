@@ -88,27 +88,31 @@ const ActionsCell = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AddTransactionDialog
-        walletId={selectedWallet?._id}
-        setSelectedWallet={setSelectedWallet}
-        coinApiID={coinApiID}
-        type="buy"
-        name={name}
-        open={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        setIsModalOpen={setIsAddDialogOpen}
-      />
+      {isAddDialogOpen && (
+        <AddTransactionDialog
+          walletId={selectedWallet?._id}
+          setSelectedWallet={setSelectedWallet}
+          coinApiID={coinApiID}
+          type="buy"
+          name={name}
+          open={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+          setIsModalOpen={setIsAddDialogOpen}
+        />
+      )}
 
-      <AddTransactionDialog
-        walletId={selectedWallet?._id}
-        setSelectedWallet={setSelectedWallet}
-        coinApiID={coinApiID}
-        type="sell"
-        name={name}
-        open={isSellDialogOpen}
-        onOpenChange={setIsSellDialogOpen}
-        setIsModalOpen={setIsSellDialogOpen}
-      />
+      {isSellDialogOpen && (
+        <AddTransactionDialog
+          walletId={selectedWallet?._id}
+          setSelectedWallet={setSelectedWallet}
+          coinApiID={coinApiID}
+          type="sell"
+          name={name}
+          open={isSellDialogOpen}
+          onOpenChange={setIsSellDialogOpen}
+          setIsModalOpen={setIsSellDialogOpen}
+        />
+      )}
     </>
   );
 };
