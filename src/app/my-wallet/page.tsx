@@ -159,6 +159,7 @@ const page = () => {
           selected={!selectedWallet}
           totalValue={formatPrice(totalWalletsValue)}
           onClick={() => handleChangeWallet(null)}
+          color="#5178ff"
         />
         <div className="h-[1px] bg-foreground" />
 
@@ -169,13 +170,14 @@ const page = () => {
             <p>My portfolios ({userWallets?.length})</p>
             <div className="flex flex-col gap-4">
               <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
-                {userWallets?.map((wallet) => (
+                {userWallets?.map((wallet, i) => (
                   <Wallet
                     key={wallet._id}
                     walletName={wallet.name}
                     totalValue={formatPrice(wallet.totalValue)}
                     onClick={() => handleChangeWallet(wallet)}
                     selected={wallet._id === selectedWallet?._id}
+                    color={getColorByIndex(i + 1)}
                   />
                 ))}
               </div>
@@ -286,77 +288,71 @@ const page = () => {
               </Card>
             )}
 
-            <div className="">
-              <h5 className="mb-2">Assets</h5>
+            <h5 className="mb-2">Assets</h5>
 
-              <Table>
-                <TableCaption>
+            <Table>
+              <TableCaption>
+                {selectedWallet && (
+                  <AddCoinDialog
+                    walletId={selectedWallet?._id}
+                    setSelectedWallet={setSelectedWallet}
+                  />
+                )}
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="text-right">Quantity</TableHead>
+                  <TableHead className="text-right">Avg. Buy Price</TableHead>
+                  <TableHead className="text-right">Avg. Sell Price</TableHead>
+
                   {selectedWallet && (
-                    <AddCoinDialog
-                      walletId={selectedWallet?._id}
-                      setSelectedWallet={setSelectedWallet}
-                    />
+                    <TableHead className="text-right">Actions</TableHead>
                   )}
-                </TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead className="text-right">Avg. Buy Price</TableHead>
-                    <TableHead className="text-right">
-                      Avg. Sell Price
-                    </TableHead>
-
-                    {selectedWallet && (
-                      <TableHead className="text-right">Actions</TableHead>
-                    )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {coinsToDisplay.map((coin) => {
-                    return (
-                      <TableRow key={coin._id}>
-                        <TableCell>{coin.name}</TableCell>
-                        <TableCell className="text-right">
-                          {coin.totalQuantity}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatPrice(
-                            calculateAvgPrices(coin.transactions).avgBuyPrice
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {calculateAvgPrices(coin.transactions).avgSellPrice
-                            ? formatPrice(
-                                calculateAvgPrices(coin.transactions)
-                                  .avgSellPrice
-                              )
-                            : "-"}
-                        </TableCell>
-                        {selectedWallet && (
-                          <TableCell className="text-right">
-                            <ActionsCell
-                              handleDeleteCoin={handleDeleteCoin}
-                              walletId={selectedWallet._id}
-                              coinApiID={coin.coinApiID}
-                              selectedWallet={selectedWallet}
-                              setSelectedWallet={setSelectedWallet}
-                              name={coin.name}
-                              transactions={coin.transactions}
-                              quantity={coin.totalQuantity}
-                              avgBuyPrice={
-                                calculateAvgPrices(coin.transactions)
-                                  .avgBuyPrice
-                              }
-                            />
-                          </TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {coinsToDisplay.map((coin) => {
+                  return (
+                    <TableRow key={coin._id}>
+                      <TableCell>{coin.name}</TableCell>
+                      <TableCell className="text-right">
+                        {coin.totalQuantity}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatPrice(
+                          calculateAvgPrices(coin.transactions).avgBuyPrice
                         )}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {calculateAvgPrices(coin.transactions).avgSellPrice
+                          ? formatPrice(
+                              calculateAvgPrices(coin.transactions).avgSellPrice
+                            )
+                          : "-"}
+                      </TableCell>
+                      {selectedWallet && (
+                        <TableCell className="text-right">
+                          <ActionsCell
+                            handleDeleteCoin={handleDeleteCoin}
+                            walletId={selectedWallet._id}
+                            coinApiID={coin.coinApiID}
+                            selectedWallet={selectedWallet}
+                            setSelectedWallet={setSelectedWallet}
+                            name={coin.name}
+                            transactions={coin.transactions}
+                            quantity={coin.totalQuantity}
+                            avgBuyPrice={
+                              calculateAvgPrices(coin.transactions).avgBuyPrice
+                            }
+                          />
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </>
         )}
       </div>

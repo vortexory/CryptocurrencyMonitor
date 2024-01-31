@@ -6,11 +6,13 @@ const Wallet = ({
   selected = false,
   totalValue,
   onClick,
+  color,
 }: {
   walletName: string;
   selected?: boolean;
   totalValue: number | string;
   onClick: () => void;
+  color: string;
 }) => {
   return (
     <div
@@ -20,7 +22,9 @@ const Wallet = ({
       } flex-container-center gap-3 cursor-pointer hover:bg-muted-foreground p-3 rounded-md`}
     >
       <Avatar>
-        <AvatarFallback>{walletName.charAt(0)}</AvatarFallback>
+        <AvatarFallback style={{ backgroundColor: color }}>
+          {walletName.charAt(0)}
+        </AvatarFallback>
       </Avatar>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-bold">{walletName}</p>
