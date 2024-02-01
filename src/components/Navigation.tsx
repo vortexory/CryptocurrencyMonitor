@@ -21,6 +21,14 @@ import {
 } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers/index";
 import { Button } from "./ui/button";
+import { Menu } from "lucide-react";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Navigation = () => {
   const { data: session } = useSession();
@@ -45,7 +53,38 @@ const Navigation = () => {
 
   return (
     <div className="wrapper flex-container-center justify-between">
-      <div className="flex-container-center gap-6">
+      <div className="w-full flex-container-center justify-end sm:hidden">
+        <Sheet>
+          <SheetTrigger>
+            <Menu className="cursor-pointer" />
+          </SheetTrigger>
+          <SheetContent side="top" className="py-12">
+            <div className="flex flex-col gap-2 items-center">
+              <Link
+                href="/"
+                className="border-b border-transparent hover:border-foreground"
+              >
+                <SheetClose>Home</SheetClose>
+              </Link>
+
+              <Link
+                href="/portfolio-tracker"
+                className="border-b border-transparent hover:border-foreground"
+              >
+                <SheetClose>Portfolio Tracker</SheetClose>
+              </Link>
+            </div>
+            <div className="mt-4 flex-container-center justify-center gap-4 w-full">
+              <ModeToggle />
+              <Button onClick={handleAuthentication} className="w-fit">
+                {session?.user ? "Sign Out" : "Sign In"}
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="hidden sm:flex-container-center gap-6">
         <Link
           href="/"
           className="border-b border-transparent hover:border-foreground"
@@ -59,7 +98,7 @@ const Navigation = () => {
           Portfolio Tracker
         </Link>
       </div>
-      <div className="flex-container-center gap-4">
+      <div className="hidden sm:flex-container-center gap-4">
         <ModeToggle />
 
         {session?.user ? (
