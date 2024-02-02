@@ -55,6 +55,13 @@ export interface SelectedCoinInfo {
   pricePerCoin: number;
 }
 
+export interface Watchlist {
+  name: string;
+  _id: string;
+  coins: Array<{ name: string; id: number }>;
+  main: boolean;
+}
+
 export interface Session {
   expires: string | null;
   user: {
@@ -63,6 +70,7 @@ export interface Session {
     image: string | null;
     name: string | null;
     walletsValueGoal: number;
+    watchlists: Array<Watchlist>;
   } | null;
 }
 

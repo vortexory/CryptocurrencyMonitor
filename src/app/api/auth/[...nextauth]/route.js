@@ -18,6 +18,7 @@ const handler = NextAuth({
 
       session.user.id = sessionUser._id.toString();
       session.user.walletsValueGoal = sessionUser.walletsValueGoal;
+      session.user.watchlists = sessionUser.watchlists;
 
       return session;
     },
