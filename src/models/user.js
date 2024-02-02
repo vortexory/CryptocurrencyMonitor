@@ -1,5 +1,6 @@
 import { Schema, model, models } from "mongoose";
 import WalletSchema from "@/models/wallet";
+import WatchlistSchema from "@/models/watchlist";
 
 const UserSchema = new Schema({
   email: {
@@ -25,6 +26,10 @@ const UserSchema = new Schema({
   walletsValueGoal: {
     type: Number,
     default: 0,
+  },
+  watchlists: {
+    type: [WatchlistSchema],
+    default: [{ name: "My First Watchlist", coins: [], main: true }],
   },
 });
 
