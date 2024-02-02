@@ -73,6 +73,13 @@ const Navigation = () => {
               >
                 <SheetClose>Portfolio Tracker</SheetClose>
               </Link>
+
+              <Link
+                href="/watchlist"
+                className="border-b border-transparent hover:border-foreground"
+              >
+                <SheetClose>Watchlist</SheetClose>
+              </Link>
             </div>
             <div className="mt-4 flex-container-center justify-center gap-4 w-full">
               <ModeToggle />
@@ -96,6 +103,12 @@ const Navigation = () => {
           className="border-b border-transparent hover:border-foreground"
         >
           Portfolio Tracker
+        </Link>
+        <Link
+          href="/watchlist"
+          className="border-b border-transparent hover:border-foreground"
+        >
+          Watchlist
         </Link>
       </div>
       <div className="hidden sm:flex-container-center gap-4">
