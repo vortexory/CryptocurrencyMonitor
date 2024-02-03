@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -72,23 +73,33 @@ const page = () => {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="flex flex-col gap-2 p-3 min-w-[250px] max-w-full">
-                  {session?.user?.watchlists.map((watchlist) => (
-                    <div
-                      key={watchlist._id}
-                      className="flex-container-center gap-3 cursor-pointer px-2 py-1 rounded-md hover:bg-secondary"
-                    >
-                      <p className="text-md">{watchlist.name}</p>
-                      {watchlist.main && (
-                        <Badge className="hover:bg-primary">Main</Badge>
-                      )}
-                    </div>
-                  ))}
+                  <div className="max-h-56 flex flex-col gap-2 overflow-y-auto">
+                    {session?.user?.watchlists.map((watchlist) => (
+                      <DropdownMenuItem
+                        key={watchlist._id}
+                        className={`${
+                          selectedWatchlist?._id.toString() ===
+                            watchlist._id.toString() && "bg-secondary"
+                        }  flex-container-center gap-3 cursor-pointer`}
+                        onClick={() =>
+                          setTimeout(() => {
+                            setSelectedWatchlist(watchlist);
+                          }, 200)
+                        }
+                      >
+                        <p className="text-md">{watchlist.name}</p>
+                        {watchlist.main && (
+                          <Badge className="hover:bg-primary">Main</Badge>
+                        )}
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
 
                   <DropdownMenuSeparator />
-                  <Button variant="ghost">
+                  <DropdownMenuItem className="flex-container-center justify-center cursor-pointer">
                     <PlusIcon className="mr-2" />
                     New Watchlist
-                  </Button>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               {selectedWatchlist?.description && (
