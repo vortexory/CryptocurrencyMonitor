@@ -26,6 +26,12 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const page = () => {
   const [dropdownOpen, setDropDownOpen] = useState<boolean>(false);
@@ -118,7 +124,19 @@ const page = () => {
                   {selectedWatchlist.coins.map((coin, i) => (
                     <TableRow>
                       <TableCell className="w-14">
-                        <StarIcon className="h-5 w-5" />
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <StarIcon
+                                className="h-5 w-5 text-[#f6b97e] cursor-pointer"
+                                fill="#f6b97e"
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Remove from watchlist</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
                       <TableCell className="w-14" align="right">
                         {i + 1}
