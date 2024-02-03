@@ -5,6 +5,9 @@ const WatchlistSchema = new Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+  },
   coins: {
     type: [{ id: Number, name: String }],
     default: [],

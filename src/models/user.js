@@ -29,7 +29,14 @@ const UserSchema = new Schema({
   },
   watchlists: {
     type: [WatchlistSchema],
-    default: [{ name: "My First Watchlist", coins: [], main: true }],
+    default: [
+      {
+        name: "My First Watchlist",
+        description: "This is my first watchlist.",
+        coins: [],
+        main: true,
+      },
+    ],
   },
 });
 

@@ -57,6 +57,7 @@ export interface SelectedCoinInfo {
 
 export interface Watchlist {
   name: string;
+  description: string;
   _id: string;
   coins: Array<{ name: string; id: number }>;
   main: boolean;
