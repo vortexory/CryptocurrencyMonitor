@@ -34,16 +34,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
+import AddCoinToWatchlistDialog from "@/components/AddCoinToWatchlistDialog";
+import { useWatchlist } from "@/providers/WatchlistProvider";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownOpen, setDropDownOpen] = useState<boolean>(false);
-  const [watchLists, setWatchlists] = useState<Watchlist[]>([]);
-  const [selectedWatchlist, setSelectedWatchlist] = useState<Watchlist | null>(
-    null
-  );
 
   const { data, status } = useSession();
+  const { watchlists, selectedWatchlist, setWatchlists, setSelectedWatchlist } =
+    useWatchlist();
 
   const session = data as Session;
 
@@ -78,7 +78,7 @@ const page = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="flex flex-col gap-2 p-3 min-w-[250px] max-w-full">
                   <div className="max-h-56 flex flex-col gap-2 overflow-y-auto">
-                    {watchLists.map((watchlist) => (
+                    {watchlists.map((watchlist) => (
                       <DropdownMenuItem
                         key={watchlist._id}
                         className={`${
@@ -114,8 +114,6 @@ const page = () => {
                   open={isModalOpen}
                   onOpenChange={setIsModalOpen}
                   setIsModalOpen={setIsModalOpen}
-                  setWatchlists={setWatchlists}
-                  setSelectedWatchlist={setSelectedWatchlist}
                 />
               )}
 
@@ -127,10 +125,7 @@ const page = () => {
             </div>
 
             <div className="flex-container-center gap-2">
-              <Button>
-                <PlusIcon className="mr-2" />
-                New asset
-              </Button>
+              <AddCoinToWatchlistDialog />
               <Button variant="secondary">
                 <PenIcon className="mr-2 h-5 w-5" />
                 Edit

@@ -11,24 +11,21 @@ import {
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { Session, Watchlist } from "@/utils/interfaces";
+import { Session } from "@/utils/interfaces";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
+import { useWatchlist } from "@/providers/WatchlistProvider";
 
 const CreateWatchlistDialog = ({
   open,
   onOpenChange,
   setIsModalOpen,
-  setWatchlists,
-  setSelectedWatchlist,
 }: {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-  setWatchlists: Dispatch<SetStateAction<Watchlist[]>>;
-  setSelectedWatchlist: Dispatch<SetStateAction<Watchlist | null>>;
 }) => {
   const [watchlistDetails, setWatchlistDetails] = useState({
     name: "",
@@ -36,8 +33,8 @@ const CreateWatchlistDialog = ({
   });
 
   const { toast } = useToast();
-
   const { data } = useSession();
+  const { setSelectedWatchlist, setWatchlists } = useWatchlist();
 
   const session = data as Session | null;
 

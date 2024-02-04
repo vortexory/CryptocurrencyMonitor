@@ -7,6 +7,7 @@ import TanstackProvider from "@/providers/TanstackProvider";
 import { WalletProvider } from "@/providers/WalletProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { WatchlistProvider } from "@/providers/WatchlistProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,10 +27,12 @@ export default function RootLayout({
         <AuthProvider>
           <TanstackProvider>
             <WalletProvider>
-              <ThemeProvider attribute="class" defaultTheme="dark">
-                <Navigation />
-                {children}
-              </ThemeProvider>
+              <WatchlistProvider>
+                <ThemeProvider attribute="class" defaultTheme="dark">
+                  <Navigation />
+                  {children}
+                </ThemeProvider>
+              </WatchlistProvider>
             </WalletProvider>
           </TanstackProvider>
         </AuthProvider>
