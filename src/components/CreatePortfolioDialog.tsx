@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
@@ -30,7 +30,7 @@ const CreatePortfolioDialog = () => {
 
   const session = data as Session | null;
 
-  const { mutateAsync, isPending, isError, isSuccess } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (newWallet: { userId: string; walletName: string }) => {
       return axios.post("/api/wallet/new", newWallet);
     },

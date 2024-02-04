@@ -31,9 +31,14 @@ export const POST = async (req) => {
 
     await user.save();
 
-    return new Response(JSON.stringify(user.watchlists), {
-      status: 201,
-    });
+    const newWatchlist = user.watchlists[user.watchlists.length - 1];
+
+    return new Response(
+      JSON.stringify({ updatedWatchlists: user.watchlists, newWatchlist }),
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     console.log(error);
 

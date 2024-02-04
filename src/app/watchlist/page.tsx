@@ -33,9 +33,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
 
 const page = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownOpen, setDropDownOpen] = useState<boolean>(false);
+  const [watchLists, setWatchlists] = useState<Watchlist[]>([]);
   const [selectedWatchlist, setSelectedWatchlist] = useState<Watchlist | null>(
     null
   );
@@ -47,8 +50,9 @@ const page = () => {
   useEffect(() => {
     if (session?.user) {
       const mainWatchlist =
-        session?.user?.watchlists.find((watchlist) => watchlist.main) ?? null;
+        session.user.watchlists.find((watchlist) => watchlist.main) ?? null;
 
+      setWatchlists(session.user.watchlists);
       setSelectedWatchlist(mainWatchlist);
     }
   }, [session?.user]);
@@ -74,7 +78,7 @@ const page = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="flex flex-col gap-2 p-3 min-w-[250px] max-w-full">
                   <div className="max-h-56 flex flex-col gap-2 overflow-y-auto">
-                    {session?.user?.watchlists.map((watchlist) => (
+                    {watchLists.map((watchlist) => (
                       <DropdownMenuItem
                         key={watchlist._id}
                         className={`${
@@ -96,12 +100,25 @@ const page = () => {
                   </div>
 
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="flex-container-center justify-center cursor-pointer">
+                  <DropdownMenuItem
+                    className="flex-container-center justify-center cursor-pointer"
+                    onClick={() => setIsModalOpen(true)}
+                  >
                     <PlusIcon className="mr-2" />
                     New Watchlist
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              {isModalOpen && (
+                <CreateWatchlistDialog
+                  open={isModalOpen}
+                  onOpenChange={setIsModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  setWatchlists={setWatchlists}
+                  setSelectedWatchlist={setSelectedWatchlist}
+                />
+              )}
+
               {selectedWatchlist?.description && (
                 <p className="text-sm mt-2 text-muted-foreground">
                   {selectedWatchlist.description}
