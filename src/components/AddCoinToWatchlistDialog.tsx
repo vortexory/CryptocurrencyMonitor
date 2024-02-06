@@ -8,29 +8,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { PlusIcon, StarIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
 import { CoinData, Session } from "@/utils/interfaces";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import { useWatchlist } from "@/providers/WatchlistProvider";
+import { Checkbox } from "./ui/checkbox";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 const AddCoinToWatchlistDialog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
   const [hasSearched, setHasSearched] = useState<boolean>(false);
 
-  const { data } = useSession();
+  const [selectedCoins, setSelectedCoins] = useState<
+    {
+      id: number;
+      name: string;
+    }[]
+  >([]);
 
+  const { data } = useSession();
+  const { selectedWatchlist, setSelectedWatchlist } = useWatchlist();
   const { toast } = useToast();
 
   const session = data as Session | null;
-
-  const queryClient = useQueryClient();
 
   const {
     data: coins,
@@ -48,21 +56,21 @@ const AddCoinToWatchlistDialog = () => {
   });
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: (coin: {
+    mutationFn: (payload: {
       userId: string;
-      walletId: string;
-      coinName: string;
-      coinApiID: number;
-      quantity: number;
-      pricePerCoin: number;
+      watchlistId: string;
+      coins: {
+        id: number;
+        name: string;
+      }[];
     }) => {
-      return axios.post("/api/wallet/add-coin", coin);
+      return axios.post("/api/watchlist/add-coin", payload);
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["wallets"] });
+      setSelectedWatchlist(res.data);
       toast({
-        title: "Coin Added",
-        description: "The coin has been added to the wallet.",
+        title: "Coins Added",
+        description: "The coins have been added to the wallet.",
       });
     },
     onError: () => {
@@ -85,7 +93,51 @@ const AddCoinToWatchlistDialog = () => {
     }
   };
 
-  const handleAddCoin = async () => {};
+  const handleToggleCoin = (e: CheckedState, coin: CoinData) => {
+    if (e) {
+      setSelectedCoins((prev) => [
+        ...prev,
+        { id: coin.id ?? 0, name: `${coin.name} ${coin.symbol}` },
+      ]);
+    } else {
+      const updatedList = selectedCoins.filter((c) => c.id !== coin.id);
+      setSelectedCoins(updatedList);
+    }
+  };
+
+  const handleAddToWatchlist = async () => {
+    try {
+      if (
+        session?.user?.id &&
+        selectedWatchlist?._id &&
+        selectedCoins.length > 0
+      ) {
+        const payload = {
+          userId: session.user.id,
+          watchlistId: selectedWatchlist._id,
+          coins: selectedCoins,
+        };
+
+        await mutateAsync(payload);
+      }
+    } catch (error) {
+      console.error("Error adding coins to watchlist:", error);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  const resetDialogState = () => {
+    setSelectedCoins([]);
+    setInputValue("");
+    setHasSearched(false);
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      resetDialogState();
+    }
+  }, [isModalOpen]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -116,9 +168,14 @@ const AddCoinToWatchlistDialog = () => {
               coins?.length > 0 ? (
                 coins.map((coinObj: any) => {
                   const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                  const watchlistCoins = selectedWatchlist?.coins;
+                  const coinExists = watchlistCoins?.find(
+                    (c) => c.id === coin.id
+                  );
+
                   return (
                     <Badge
-                      className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
+                      className="py-2 rounded-md w-full flex-container-center justify-between"
                       key={coin.id}
                       variant="secondary"
                     >
@@ -128,10 +185,13 @@ const AddCoinToWatchlistDialog = () => {
                           ? `$${coin.quote.USD.price.toFixed(2)}`
                           : "Price not provided"}
                       </p>
-                      <StarIcon
-                        className="h-5 w-5 text-[#f6b97e] cursor-pointer"
-                        fill="#f6b97e"
-                      />
+                      {!coinExists ? (
+                        <Checkbox
+                          onCheckedChange={(e) => handleToggleCoin(e, coin)}
+                        />
+                      ) : (
+                        <p className="text-[10px]">Added</p>
+                      )}
                     </Badge>
                   );
                 })
@@ -143,7 +203,7 @@ const AddCoinToWatchlistDialog = () => {
             ) : null}
             <Button
               type="button"
-              disabled={!searchTerm || isLoading}
+              disabled={!searchTerm || isLoading || isPending || isFetching}
               onClick={searchCoin}
             >
               Search
@@ -156,10 +216,16 @@ const AddCoinToWatchlistDialog = () => {
             type="button"
             variant="secondary"
             onClick={() => setIsModalOpen(false)}
+            disabled={isPending}
           >
             Close
           </Button>
-          <Button>Add selected</Button>
+          <Button
+            disabled={selectedCoins.length === 0 || isPending}
+            onClick={handleAddToWatchlist}
+          >
+            Add selected
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

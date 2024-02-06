@@ -214,7 +214,7 @@ const AddCoinDialog = ({
                 ) : null}
                 <Button
                   type="button"
-                  disabled={!searchTerm || isLoading}
+                  disabled={!searchTerm || isLoading || isFetching}
                   onClick={searchCoin}
                 >
                   Search
@@ -284,7 +284,12 @@ const AddCoinDialog = ({
 
         <DialogFooter className="sm:justify-end">
           {selectedCoin && (
-            <Button type="button" variant="outline" onClick={resetDialogState}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetDialogState}
+              disabled={isPending}
+            >
               Back
             </Button>
           )}
@@ -293,6 +298,7 @@ const AddCoinDialog = ({
             type="button"
             variant="secondary"
             onClick={() => setIsModalOpen(false)}
+            disabled={isPending}
           >
             Close
           </Button>
