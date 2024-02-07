@@ -26,6 +26,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import { formatPrice } from "@/utils/functions";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const AddCoinDialog = ({
   walletId,
@@ -175,7 +176,15 @@ const AddCoinDialog = ({
 
               <div className="flex flex-col gap-3">
                 {isLoading || isFetching ? (
-                  <div>Loading...</div>
+                  <ClipLoader
+                    color="#fff"
+                    loading
+                    cssOverride={{
+                      display: "block",
+                      margin: "0 auto",
+                    }}
+                    size={50}
+                  />
                 ) : hasSearched ? (
                   coins?.length > 0 ? (
                     coins.map((coinObj: any) => {

@@ -14,6 +14,7 @@ import { formatAsCurrency, formatPrice } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default function Home() {
   const { data: cryptocurrencies, isLoading } = useQuery({
@@ -28,13 +29,15 @@ export default function Home() {
   return (
     <main className="wrapper">
       {isLoading ? (
-        <div className="flex flex-col gap-4">
-          <Skeleton className="w-full h-4 rounded-sm" />
-          <Skeleton className="w-full h-4 rounded-sm" />
-          <Skeleton className="w-full h-4 rounded-sm" />
-          <Skeleton className="w-full h-4 rounded-sm" />
-          <Skeleton className="w-full h-4 rounded-sm" />
-        </div>
+        <ClipLoader
+          color="#fff"
+          loading
+          cssOverride={{
+            display: "block",
+            margin: "0 auto",
+          }}
+          size={100}
+        />
       ) : (
         <Table>
           <TableCaption>

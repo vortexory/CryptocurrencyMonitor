@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar";
 import { formatDate, formatPrice } from "@/utils/functions";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Transactions = ({
   transactions,
@@ -62,7 +63,15 @@ const Transactions = ({
   }, []);
 
   return isLoading ? (
-    <div>Loading...</div>
+    <ClipLoader
+      color="#fff"
+      loading
+      cssOverride={{
+        display: "block",
+        margin: "0 auto",
+      }}
+      size={100}
+    />
   ) : (
     <>
       <Button

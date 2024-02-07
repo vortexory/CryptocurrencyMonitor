@@ -23,6 +23,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 import { formatPrice } from "@/utils/functions";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const AddTransactionDialog = ({
   walletId,
@@ -146,7 +147,15 @@ const AddTransactionDialog = ({
           <DialogTitle>Add a coin</DialogTitle>
         </DialogHeader>
         {isLoading ? (
-          <div>Loading...</div>
+          <ClipLoader
+            color="#fff"
+            loading
+            cssOverride={{
+              display: "block",
+              margin: "0 auto",
+            }}
+            size={50}
+          />
         ) : (
           <div className="my-2 flex flex-col gap-3">
             <>

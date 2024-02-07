@@ -36,6 +36,7 @@ import {
 import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
 import AddCoinToWatchlistDialog from "@/components/AddCoinToWatchlistDialog";
 import { useWatchlist } from "@/providers/WatchlistProvider";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,7 +61,15 @@ const page = () => {
   return (
     <div className="wrapper">
       {status === "loading" ? (
-        <div>Loading...</div>
+        <ClipLoader
+          color="#fff"
+          loading
+          cssOverride={{
+            display: "block",
+            margin: "0 auto",
+          }}
+          size={100}
+        />
       ) : (
         <>
           <div className="flex-container-center justify-between gap-4">

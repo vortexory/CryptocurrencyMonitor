@@ -39,6 +39,7 @@ import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
 import Transactions from "@/components/Transactions";
 import { useWallet } from "@/providers/WalletProvider";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const page = () => {
   const { data } = useSession();
@@ -164,7 +165,15 @@ const page = () => {
         <div className="h-[1px] bg-foreground" />
 
         {isLoading ? (
-          <p>Loading...</p>
+          <ClipLoader
+            color="#fff"
+            loading
+            cssOverride={{
+              display: "block",
+              margin: "8px auto 0px auto",
+            }}
+            size={50}
+          />
         ) : (
           <>
             <p>My portfolios ({userWallets?.length})</p>
