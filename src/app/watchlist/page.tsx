@@ -37,6 +37,9 @@ import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
 import AddCoinToWatchlistDialog from "@/components/AddCoinToWatchlistDialog";
 import { useWatchlist } from "@/providers/WatchlistProvider";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +50,46 @@ const page = () => {
     useWatchlist();
 
   const session = data as Session;
+
+  const { mutateAsync } = useMutation({
+    mutationFn: (payload: {
+      userId: string;
+      watchlistId: string;
+      id: number;
+    }) => {
+      return axios.patch("/api/watchlist/remove-coin", payload);
+    },
+    onSuccess: (res) => {
+      setSelectedWatchlist(res.data);
+      toast({
+        title: "Coin removed",
+        description: "The coin has been deleted from your wallet.",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    },
+  });
+
+  const handleRemoveCoin = async (id: number) => {
+    try {
+      if (session?.user?.id && selectedWatchlist?._id) {
+        const payload = {
+          userId: session.user.id,
+          watchlistId: selectedWatchlist._id,
+          id,
+        };
+
+        await mutateAsync(payload);
+      }
+    } catch (error) {
+      console.error("Error removing transaction: ", error);
+    }
+  };
 
   useEffect(() => {
     if (session?.user) {
@@ -162,6 +205,7 @@ const page = () => {
                               <StarIcon
                                 className="h-5 w-5 text-[#f6b97e] cursor-pointer"
                                 fill="#f6b97e"
+                                onClick={() => handleRemoveCoin(coin.id)}
                               />
                             </TooltipTrigger>
                             <TooltipContent>
