@@ -32,6 +32,7 @@ const AddCoinToWatchlistDialog = () => {
     {
       id: number;
       name: string;
+      cmcRank: number;
     }[]
   >([]);
 
@@ -63,6 +64,7 @@ const AddCoinToWatchlistDialog = () => {
       coins: {
         id: number;
         name: string;
+        cmcRank: number;
       }[];
     }) => {
       return axios.post("/api/watchlist/add-coin", payload);
@@ -98,7 +100,11 @@ const AddCoinToWatchlistDialog = () => {
     if (e) {
       setSelectedCoins((prev) => [
         ...prev,
-        { id: coin.id ?? 0, name: `${coin.name} ${coin.symbol}` },
+        {
+          id: coin.id ?? 0,
+          name: `${coin.name} ${coin.symbol}`,
+          cmcRank: coin.cmc_rank ?? 0,
+        },
       ]);
     } else {
       const updatedList = selectedCoins.filter((c) => c.id !== coin.id);

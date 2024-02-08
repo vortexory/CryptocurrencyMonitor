@@ -38,7 +38,12 @@ export const POST = async (req) => {
     let duplicateCoin = false;
 
     for (const coin of coins) {
-      if (!coin.id || !coin.name) {
+      if (
+        !coin.id ||
+        !coin.name ||
+        coin.cmcRank === undefined ||
+        coin.cmcRank === null
+      ) {
         invalidFormat = true;
         break;
       }
@@ -50,7 +55,11 @@ export const POST = async (req) => {
         break;
       }
 
-      currentWatchlist.coins.push({ id: coin.id, name: coin.name });
+      currentWatchlist.coins.push({
+        id: coin.id,
+        name: coin.name,
+        cmcRank: coin.cmcRank,
+      });
     }
 
     if (invalidFormat) {

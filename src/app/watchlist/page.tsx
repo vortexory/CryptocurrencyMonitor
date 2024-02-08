@@ -196,8 +196,8 @@ const page = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {selectedWatchlist.coins.map((coin, i) => (
-                    <TableRow>
+                  {selectedWatchlist.coins.map((coin) => (
+                    <TableRow key={coin.id}>
                       <TableCell className="w-14">
                         <TooltipProvider>
                           <Tooltip>
@@ -215,7 +215,7 @@ const page = () => {
                         </TooltipProvider>
                       </TableCell>
                       <TableCell className="w-14" align="right">
-                        {i + 1}
+                        {coin.cmcRank}
                       </TableCell>
                       <TableCell align="right">{coin.name}</TableCell>
                     </TableRow>
