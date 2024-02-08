@@ -202,6 +202,9 @@ const AddCoinToWatchlistDialog = () => {
                       </p>
                       {!coinExists ? (
                         <Checkbox
+                          checked={
+                            !!selectedCoins.find((c) => c.id === coin.id)
+                          }
                           onCheckedChange={(e) => handleToggleCoin(e, coin)}
                         />
                       ) : (
