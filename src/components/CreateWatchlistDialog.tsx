@@ -89,14 +89,14 @@ const CreateWatchlistDialog = ({
         </DialogHeader>
         <div className="my-2 flex flex-col gap-3">
           <Input
-            placeholder="Watchlist description"
+            placeholder="Watchlist name"
             value={watchlistDetails.name}
             onChange={(e) =>
               setWatchlistDetails((prev) => ({ ...prev, name: e.target.value }))
             }
           />
           <Input
-            placeholder="Watchlist name"
+            placeholder="Watchlist description"
             value={watchlistDetails.description}
             onChange={(e) =>
               setWatchlistDetails((prev) => ({

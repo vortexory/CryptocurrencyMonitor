@@ -57,9 +57,15 @@ export const PATCH = async (req) => {
 
     await user.save();
 
-    return new Response(JSON.stringify(currentWatchlist), {
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({
+        updatedWatchlist: currentWatchlist,
+        updatedWatchlists: user.watchlists,
+      }),
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.log(error);
 

@@ -40,6 +40,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
+import EditWatchlistDialog from "@/components/EditWatchlistDialog";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -178,10 +179,7 @@ const page = () => {
 
             <div className="flex-container-center gap-2">
               <AddCoinToWatchlistDialog />
-              <Button variant="secondary">
-                <PenIcon className="mr-2 h-5 w-5" />
-                Edit
-              </Button>
+              <EditWatchlistDialog />
             </div>
           </div>
 
