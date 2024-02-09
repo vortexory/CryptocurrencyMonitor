@@ -20,6 +20,7 @@ import { useWatchlist } from "@/providers/WatchlistProvider";
 import { PenIcon } from "lucide-react";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
+import { Textarea } from "./ui/textarea";
 
 const EditWatchlistDialog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,11 +124,11 @@ const EditWatchlistDialog = () => {
           <DialogTitle>Edit watchlist</DialogTitle>
         </DialogHeader>
         <div className="mt-2 flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
+          <div className="label-input-container">
             <Label htmlFor="name">New name</Label>
             <Input
               id="name"
-              placeholder="New name"
+              placeholder="My watchlist"
               value={watchlistDetails.name}
               onChange={(e) =>
                 setWatchlistDetails((prev) => ({
@@ -138,11 +139,12 @@ const EditWatchlistDialog = () => {
             />
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="label-input-container">
             <Label htmlFor="description">New description</Label>
-            <Input
+            <Textarea
               id="description"
-              placeholder="New description"
+              placeholder="This is an awesome watchlist"
+              className="resize-none"
               value={watchlistDetails.description}
               onChange={(e) =>
                 setWatchlistDetails((prev) => ({
@@ -165,7 +167,7 @@ const EditWatchlistDialog = () => {
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-end pt-2">
+        <DialogFooter className="sm:justify-end">
           <Button
             type="button"
             variant="secondary"

@@ -66,6 +66,10 @@
     @apply flex items-center;
   }
 
+  .label-input-container {
+    @apply flex flex-col gap-3;
+  }
+
   h3 {
     @apply text-3xl;
   }

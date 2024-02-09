@@ -22,6 +22,7 @@ import { useWatchlist } from "@/providers/WatchlistProvider";
 import { Checkbox } from "./ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import ClipLoader from "react-spinners/ClipLoader";
+import { Label } from "./ui/label";
 
 const AddCoinToWatchlistDialog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,20 +156,24 @@ const AddCoinToWatchlistDialog = () => {
         <DialogHeader>
           <DialogTitle>Add a coin</DialogTitle>
         </DialogHeader>
-        <div className="my-2 flex flex-col gap-3">
-          <Input
-            placeholder="Search"
-            value={inputValue}
-            onChange={(e) => {
-              if (hasSearched) {
-                setHasSearched(false);
-              }
+        <div className="my-2 flex flex-col gap-6">
+          <div className="label-input-container">
+            <Label htmlFor="symbol">Coin symbol</Label>
+            <Input
+              id="symbol"
+              placeholder="ETH"
+              value={inputValue}
+              onChange={(e) => {
+                if (hasSearched) {
+                  setHasSearched(false);
+                }
 
-              setInputValue(e.target.value);
-            }}
-          />
+                setInputValue(e.target.value);
+              }}
+            />
+          </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6">
             {isLoading || isFetching ? (
               <ClipLoader
                 color="#fff"
@@ -234,12 +239,14 @@ const AddCoinToWatchlistDialog = () => {
             type="button"
             variant="secondary"
             onClick={() => setIsModalOpen(false)}
-            disabled={isPending}
+            disabled={isPending || isLoading || isFetching}
           >
             Close
           </Button>
           <Button
-            disabled={selectedCoins.length === 0 || isPending}
+            disabled={
+              selectedCoins.length === 0 || isPending || isLoading || isFetching
+            }
             onClick={handleAddToWatchlist}
           >
             Add selected

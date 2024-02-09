@@ -116,8 +116,8 @@ const page = () => {
         />
       ) : (
         <>
-          <div className="flex-container-center justify-between gap-4">
-            <div className="max-w-[65%]">
+          <div className="flex flex-col sm:flex-row justify-between gap-6">
+            <div className="w-full sm:w-2/3">
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropDownOpen}>
                 <DropdownMenuTrigger className="outline-none ring-0">
                   <div className="flex-container-center gap-1">
@@ -177,7 +177,7 @@ const page = () => {
               )}
             </div>
 
-            <div className="flex-container-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <AddCoinToWatchlistDialog />
               <EditWatchlistDialog />
             </div>
@@ -185,7 +185,7 @@ const page = () => {
 
           <div className="mt-12">
             {selectedWatchlist?.coins.length ? (
-              <Table className="max-w-[50%]">
+              <Table className="w-full lg:w-1/2">
                 <TableHeader>
                   <TableRow>
                     <TableHead></TableHead>
