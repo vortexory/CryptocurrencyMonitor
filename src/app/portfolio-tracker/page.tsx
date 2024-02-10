@@ -153,7 +153,7 @@ const page = () => {
   }, [session]);
 
   return (
-    <div className="wrapper flex gap-10">
+    <div className="wrapper flex flex-col lg:flex-row gap-10 md:gap-12">
       <div className="flex-1 flex flex-col gap-4">
         <Wallet
           walletName="Overview"
@@ -178,7 +178,7 @@ const page = () => {
           <>
             <p>My portfolios ({userWallets?.length})</p>
             <div className="flex flex-col gap-4">
-              <div className="max-h-[540px] overflow-y-auto flex flex-col gap-4 px-2">
+              <div className="max-h-[340px] lg:max-h-[540px] overflow-y-auto flex flex-col gap-4 p-2">
                 {userWallets?.map((wallet, i) => (
                   <Wallet
                     key={wallet._id}
@@ -206,8 +206,8 @@ const page = () => {
           />
         ) : (
           <>
-            <div className="flex justify-between gap-12">
-              <div>
+            <div className="flex flex-col md:flex-row justify-start md:justify-between gap-4">
+              <div className="flex flex-col items-center md:items-start">
                 <div className="flex-container-center gap-2">
                   <Avatar>
                     <AvatarFallback>
@@ -218,43 +218,44 @@ const page = () => {
                     {selectedWallet ? selectedWallet.name : "Overview"}
                   </p>
                 </div>
-                <h3 className="mt-3">
+                <h3 className="mt-4">
                   {selectedWallet
                     ? formatPrice(selectedWallet.totalValue)
                     : formatPrice(totalWalletsValue)}
                 </h3>
               </div>
 
-              <div className="w-2/3 flex flex-col gap-3">
-                <p className="text-sm text-muted-foreground font-bold">
-                  {walletsValueGoal
-                    ? `Progress towards your goal - ${formatPrice(
-                        walletsValueGoal
-                      )}`
-                    : "You haven't set a goal yet"}
-                </p>
-                <Progress
-                  value={
-                    walletsValueGoal
-                      ? Math.min(
-                          +((totalWalletsValue / walletsValueGoal) * 100),
-                          100
-                        )
-                      : 0
-                  }
+              {selectedWallet && (
+                <DeletePortfolioDialog
+                  selectedWallet={selectedWallet}
+                  setSelectedWallet={setSelectedWallet}
                 />
-                <AddEditGoalDialog
-                  setWalletsValueGoal={setWalletsValueGoal}
-                  walletsValueGoal={walletsValueGoal}
-                />
-              </div>
+              )}
             </div>
-            {selectedWallet && (
-              <DeletePortfolioDialog
-                selectedWallet={selectedWallet}
-                setSelectedWallet={setSelectedWallet}
+
+            <div className="w-full md:w-2/3 flex flex-col gap-4">
+              <p className="text-sm text-muted-foreground font-bold">
+                {walletsValueGoal
+                  ? `Progress towards your goal - ${formatPrice(
+                      walletsValueGoal
+                    )}`
+                  : "You haven't set a goal yet"}
+              </p>
+              <Progress
+                value={
+                  walletsValueGoal
+                    ? Math.min(
+                        +((totalWalletsValue / walletsValueGoal) * 100),
+                        100
+                      )
+                    : 0
+                }
               />
-            )}
+              <AddEditGoalDialog
+                setWalletsValueGoal={setWalletsValueGoal}
+                walletsValueGoal={walletsValueGoal}
+              />
+            </div>
 
             {finalCoins.length > 0 && (
               <Card>
@@ -264,11 +265,11 @@ const page = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between gap-12">
+                  <div className="flex flex-col md:flex-row justify-start md:justify-between gap-12">
                     <PieChart
                       data={coinsWithTotalValue}
                       lineWidth={25}
-                      style={{ height: "250px", flex: 1 }}
+                      style={{ maxHeight: "250px", flex: 1 }}
                     />
                     <div className="flex-1 flex flex-col items-center gap-3">
                       {finalCoins.map((coin, i) => {
@@ -297,71 +298,81 @@ const page = () => {
               </Card>
             )}
 
-            <h5 className="mb-2">Assets</h5>
+            <h5 className="text-center md:text-start">Assets</h5>
 
-            <Table>
-              <TableCaption>
-                {selectedWallet && (
-                  <AddCoinDialog
-                    walletId={selectedWallet?._id}
-                    setSelectedWallet={setSelectedWallet}
-                  />
-                )}
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Quantity</TableHead>
-                  <TableHead className="text-right">Avg. Buy Price</TableHead>
-                  <TableHead className="text-right">Avg. Sell Price</TableHead>
+            <div className="flex flex-col gap-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="text-right min-w-[150px]">
+                      Quantity
+                    </TableHead>
+                    <TableHead className="text-right min-w-[150px]">
+                      Avg. Buy Price
+                    </TableHead>
+                    <TableHead className="text-right min-w-[150px]">
+                      Avg. Sell Price
+                    </TableHead>
 
-                  {selectedWallet && (
-                    <TableHead className="text-right">Actions</TableHead>
-                  )}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {coinsToDisplay.map((coin) => {
-                  return (
-                    <TableRow key={coin._id}>
-                      <TableCell>{coin.name}</TableCell>
-                      <TableCell className="text-right">
-                        {coin.totalQuantity}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {formatPrice(
-                          calculateAvgPrices(coin.transactions).avgBuyPrice
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {calculateAvgPrices(coin.transactions).avgSellPrice
-                          ? formatPrice(
-                              calculateAvgPrices(coin.transactions).avgSellPrice
-                            )
-                          : "-"}
-                      </TableCell>
-                      {selectedWallet && (
+                    {selectedWallet && (
+                      <TableHead className="text-right min-w-[150px]">
+                        Actions
+                      </TableHead>
+                    )}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {coinsToDisplay.map((coin) => {
+                    return (
+                      <TableRow key={coin._id}>
+                        <TableCell>{coin.name}</TableCell>
                         <TableCell className="text-right">
-                          <ActionsCell
-                            handleDeleteCoin={handleDeleteCoin}
-                            walletId={selectedWallet._id}
-                            coinApiID={coin.coinApiID}
-                            selectedWallet={selectedWallet}
-                            setSelectedWallet={setSelectedWallet}
-                            name={coin.name}
-                            transactions={coin.transactions}
-                            quantity={coin.totalQuantity}
-                            avgBuyPrice={
-                              calculateAvgPrices(coin.transactions).avgBuyPrice
-                            }
-                          />
+                          {coin.totalQuantity}
                         </TableCell>
-                      )}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        <TableCell className="text-right">
+                          {formatPrice(
+                            calculateAvgPrices(coin.transactions).avgBuyPrice
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {calculateAvgPrices(coin.transactions).avgSellPrice
+                            ? formatPrice(
+                                calculateAvgPrices(coin.transactions)
+                                  .avgSellPrice
+                              )
+                            : "-"}
+                        </TableCell>
+                        {selectedWallet && (
+                          <TableCell className="text-right">
+                            <ActionsCell
+                              handleDeleteCoin={handleDeleteCoin}
+                              walletId={selectedWallet._id}
+                              coinApiID={coin.coinApiID}
+                              selectedWallet={selectedWallet}
+                              setSelectedWallet={setSelectedWallet}
+                              name={coin.name}
+                              transactions={coin.transactions}
+                              quantity={coin.totalQuantity}
+                              avgBuyPrice={
+                                calculateAvgPrices(coin.transactions)
+                                  .avgBuyPrice
+                              }
+                            />
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+              {selectedWallet && (
+                <AddCoinDialog
+                  walletId={selectedWallet?._id}
+                  setSelectedWallet={setSelectedWallet}
+                />
+              )}
+            </div>
           </>
         )}
       </div>

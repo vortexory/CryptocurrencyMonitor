@@ -72,7 +72,7 @@ const DeletePortfolioDialog = ({
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <Button
-        className="w-fit"
+        className="w-full md:w-fit"
         variant="destructive"
         onClick={() => setIsModalOpen(true)}
       >

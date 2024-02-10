@@ -80,7 +80,7 @@ const AddEditGoalDialog = ({
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <Button onClick={() => setIsModalOpen(true)} className="w-fit">
+      <Button onClick={() => setIsModalOpen(true)} className="w-full md:w-fit">
         {walletsValueGoal === 0 ? "Set Goal" : "Edit Goal"}
       </Button>
       <DialogContent className="sm:max-w-md">

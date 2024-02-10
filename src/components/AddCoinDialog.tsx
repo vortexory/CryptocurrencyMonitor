@@ -152,7 +152,11 @@ const AddCoinDialog = ({
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <Button variant="ghost" onClick={() => setIsModalOpen(true)}>
+      <Button
+        variant="outline"
+        className="w-full md:w-fit mx-auto"
+        onClick={() => setIsModalOpen(true)}
+      >
         <PlusIcon className="mr-2" /> Add asset
       </Button>
       <DialogContent className="sm:max-w-md">
