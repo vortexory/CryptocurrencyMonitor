@@ -12,7 +12,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -40,9 +39,10 @@ import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
 import Transactions from "@/components/Transactions";
 import { useWallet } from "@/providers/WalletProvider";
 import ClipLoader from "react-spinners/ClipLoader";
+import { redirect } from "next/navigation";
 
 const page = () => {
-  const { data } = useSession();
+  const { data, status } = useSession();
 
   const session = data as Session;
 
@@ -152,6 +152,26 @@ const page = () => {
     }
   }, [session]);
 
+  if (isLoading || status === "loading") {
+    return (
+      <div className="wrapper">
+        <ClipLoader
+          color="#fff"
+          loading
+          cssOverride={{
+            display: "block",
+            margin: "0 auto",
+          }}
+          size={100}
+        />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return redirect("/signin");
+  }
+
   return (
     <div className="wrapper flex flex-col lg:flex-row gap-10 md:gap-12">
       <div className="flex-1 flex flex-col gap-4">
@@ -163,37 +183,22 @@ const page = () => {
           color="#5178ff"
         />
         <div className="h-[1px] bg-foreground" />
-
-        {isLoading ? (
-          <ClipLoader
-            color="#fff"
-            loading
-            cssOverride={{
-              display: "block",
-              margin: "8px auto 0px auto",
-            }}
-            size={50}
-          />
-        ) : (
-          <>
-            <p>My portfolios ({userWallets?.length})</p>
-            <div className="flex flex-col gap-4">
-              <div className="max-h-[340px] lg:max-h-[540px] overflow-y-auto flex flex-col gap-4 p-2">
-                {userWallets?.map((wallet, i) => (
-                  <Wallet
-                    key={wallet._id}
-                    walletName={wallet.name}
-                    totalValue={formatPrice(wallet.totalValue)}
-                    onClick={() => handleChangeWallet(wallet)}
-                    selected={wallet._id === selectedWallet?._id}
-                    color={getColorByIndex(i + 1)}
-                  />
-                ))}
-              </div>
-              <CreatePortfolioDialog />
-            </div>
-          </>
-        )}
+        <p>My portfolios ({userWallets?.length})</p>
+        <div className="flex flex-col gap-4">
+          <div className="max-h-[340px] lg:max-h-[540px] overflow-y-auto flex flex-col gap-4 p-2">
+            {userWallets?.map((wallet, i) => (
+              <Wallet
+                key={wallet._id}
+                walletName={wallet.name}
+                totalValue={formatPrice(wallet.totalValue)}
+                onClick={() => handleChangeWallet(wallet)}
+                selected={wallet._id === selectedWallet?._id}
+                color={getColorByIndex(i + 1)}
+              />
+            ))}
+          </div>
+          <CreatePortfolioDialog />
+        </div>
       </div>
       <div className="flex-[4] flex flex-col gap-12">
         {transactionsView.open ? (

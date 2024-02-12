@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Navigation from "@/components/Navigation";
 import TanstackProvider from "@/providers/TanstackProvider";
 import { WalletProvider } from "@/providers/WalletProvider";
 import AuthProvider from "@/components/AuthProvider";
@@ -29,7 +28,6 @@ export default function RootLayout({
             <WalletProvider>
               <WatchlistProvider>
                 <ThemeProvider attribute="class" defaultTheme="dark">
-                  <Navigation />
                   {children}
                 </ThemeProvider>
               </WatchlistProvider>
