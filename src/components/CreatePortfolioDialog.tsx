@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { Session } from "@/utils/interfaces";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
+import { Label } from "./ui/label";
 
 const CreatePortfolioDialog = () => {
   const [walletName, setWalletName] = useState<string>("");
@@ -77,17 +78,21 @@ const CreatePortfolioDialog = () => {
         <DialogHeader>
           <DialogTitle>Create a new portfolio</DialogTitle>
         </DialogHeader>
-        <div className="my-2 flex flex-col gap-3">
-          <Input
-            placeholder="Search"
-            value={walletName}
-            onChange={(e) => setWalletName(e.target.value)}
-          />
+        <div className="my-2 flex flex-col gap-6">
+          <div className="label-input-container">
+            <Label htmlFor="portfolioName">Portfolio name</Label>
+            <Input
+              id="portfolioName"
+              placeholder="My portfolio"
+              value={walletName}
+              onChange={(e) => setWalletName(e.target.value)}
+            />
+          </div>
 
           <Button
             type="button"
             onClick={handleWalletCreation}
-            disabled={isPending}
+            disabled={isPending || walletName.trim().length === 0}
           >
             Create
           </Button>

@@ -200,10 +200,7 @@ const AddCoinToWatchlistDialog = () => {
                       variant="secondary"
                     >
                       <p>
-                        {coin.name} {coin.symbol} -{" "}
-                        {coin.quote.USD.price
-                          ? `$${coin.quote.USD.price.toFixed(2)}`
-                          : "Price not provided"}
+                        {coin.name} {coin.symbol}
                       </p>
                       {!coinExists ? (
                         <Checkbox

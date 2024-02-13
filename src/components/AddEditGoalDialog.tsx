@@ -91,7 +91,7 @@ const AddEditGoalDialog = ({
               : "Edit the goal for your portfolios"}
           </DialogTitle>
         </DialogHeader>
-        <div className="my-2 flex flex-col gap-3">
+        <div className="my-2 flex flex-col gap-6">
           <Input
             placeholder="Your goal"
             value={goal}

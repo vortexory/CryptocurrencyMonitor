@@ -189,7 +189,7 @@ const page = () => {
 
       <div className="mt-12">
         {selectedWatchlist?.coins.length ? (
-          <Table className="w-full lg:w-1/2">
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
