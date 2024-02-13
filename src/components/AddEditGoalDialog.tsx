@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import { Session } from "@/utils/interfaces";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
+import { Label } from "./ui/label";
 
 const AddEditGoalDialog = ({
   setWalletsValueGoal,
@@ -73,10 +74,8 @@ const AddEditGoalDialog = ({
   };
 
   useEffect(() => {
-    if (session?.user?.id) {
-      setGoal(session.user.walletsValueGoal);
-    }
-  }, [session]);
+    setGoal(walletsValueGoal);
+  }, [walletsValueGoal, isModalOpen]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -92,14 +91,22 @@ const AddEditGoalDialog = ({
           </DialogTitle>
         </DialogHeader>
         <div className="my-2 flex flex-col gap-6">
-          <Input
-            placeholder="Your goal"
-            value={goal}
-            onChange={(e) => setGoal(+e.target.value)}
-            type="number"
-          />
+          <div className="label-input-container">
+            <Label htmlFor="goal">Goal</Label>
+            <Input
+              id="goal"
+              placeholder="$100,000"
+              value={goal}
+              onChange={(e) => setGoal(+e.target.value)}
+              type="number"
+            />
+          </div>
 
-          <Button type="button" onClick={handleGoal} disabled={isPending}>
+          <Button
+            type="button"
+            onClick={handleGoal}
+            disabled={isPending || walletsValueGoal === goal}
+          >
             {walletsValueGoal === 0 ? "Set" : "Edit"}
           </Button>
         </div>

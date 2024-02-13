@@ -163,7 +163,7 @@ const AddCoinDialog = ({
         <DialogHeader>
           <DialogTitle>Add a coin</DialogTitle>
         </DialogHeader>
-        <div className="my-2 flex flex-col gap-3">
+        <div className="my-2 flex flex-col gap-6">
           {!selectedCoin ? (
             <>
               <Input
@@ -178,7 +178,7 @@ const AddCoinDialog = ({
                 }}
               />
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-6">
                 {isLoading || isFetching ? (
                   <ClipLoader
                     color="#fff"

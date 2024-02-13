@@ -157,7 +157,7 @@ const AddTransactionDialog = ({
             size={50}
           />
         ) : (
-          <div className="my-2 flex flex-col gap-3">
+          <div className="my-2 flex flex-col gap-6">
             <>
               <Input value={name} disabled />
               <div className="flex-container-center gap-2">
