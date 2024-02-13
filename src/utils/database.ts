@@ -16,6 +16,8 @@ export const connectToDB = async () => {
       {
         dbName: "crypto-wallet",
         useNewUrlParser: true,
+        socketTimeoutMS: 30000,
+        connectTimeoutMS: 30000,
       } as ConnectOptions
     );
 
