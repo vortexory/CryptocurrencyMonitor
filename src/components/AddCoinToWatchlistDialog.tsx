@@ -50,7 +50,9 @@ const AddCoinToWatchlistDialog = () => {
     isFetching,
   } = useQuery({
     queryFn: async () => {
-      const response = await fetch(`api/getCoins?symbol=${inputValue}`);
+      const response = await fetch(
+        `api/external/get-coins-by-symbol?symbol=${inputValue}`
+      );
 
       return response.json();
     },

@@ -22,7 +22,7 @@ export default function Home() {
 
   const { data: cryptocurrencies, isLoading } = useQuery({
     queryFn: async () => {
-      const response = await axios.get("/api/cryptoData");
+      const response = await axios.get("/api/external/get-top-coins");
 
       return response.data;
     },
