@@ -193,34 +193,36 @@ const AddCoinDialog = ({
                   />
                 ) : hasSearched ? (
                   coins?.length > 0 ? (
-                    coins.map((coinObj: any) => {
-                      const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
-                      return (
-                        <Badge
-                          onClick={() => {
-                            selectCoin(coin);
+                    <div className="flex flex-col gap-3">
+                      {coins.map((coinObj: any) => {
+                        const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                        return (
+                          <Badge
+                            onClick={() => {
+                              selectCoin(coin);
 
-                            if (coin.quote.USD.price) {
-                              setSelectedCoinInfo((prev) => ({
-                                ...prev,
-                                pricePerCoin: coin.quote.USD.price ?? 0,
-                              }));
-                            }
-                          }}
-                          className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
-                          key={coin.id}
-                          variant="secondary"
-                        >
-                          <p>
-                            {coin.name} {coin.symbol} -{" "}
-                            {coin.quote.USD.price
-                              ? `$${coin.quote.USD.price.toFixed(2)}`
-                              : "Price not provided"}
-                          </p>
-                          <ChevronRight />
-                        </Badge>
-                      );
-                    })
+                              if (coin.quote.USD.price) {
+                                setSelectedCoinInfo((prev) => ({
+                                  ...prev,
+                                  pricePerCoin: coin.quote.USD.price ?? 0,
+                                }));
+                              }
+                            }}
+                            className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
+                            key={coin.id}
+                            variant="secondary"
+                          >
+                            <p>
+                              {coin.name} {coin.symbol} -{" "}
+                              {coin.quote.USD.price
+                                ? `$${coin.quote.USD.price.toFixed(2)}`
+                                : "Price not provided"}
+                            </p>
+                            <ChevronRight />
+                          </Badge>
+                        );
+                      })}
+                    </div>
                   ) : (
                     <Badge className="py-2" variant="destructive">
                       Coin not found

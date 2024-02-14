@@ -188,35 +188,37 @@ const AddCoinToWatchlistDialog = () => {
               />
             ) : hasSearched ? (
               coins?.length > 0 ? (
-                coins.map((coinObj: any) => {
-                  const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
-                  const watchlistCoins = selectedWatchlist?.coins;
-                  const coinExists = watchlistCoins?.find(
-                    (c) => c.id === coin.id
-                  );
+                <div className="flex flex-col gap-3">
+                  {coins.map((coinObj: any) => {
+                    const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                    const watchlistCoins = selectedWatchlist?.coins;
+                    const coinExists = watchlistCoins?.find(
+                      (c) => c.id === coin.id
+                    );
 
-                  return (
-                    <Badge
-                      className="py-2 rounded-md w-full flex-container-center justify-between"
-                      key={coin.id}
-                      variant="secondary"
-                    >
-                      <p>
-                        {coin.name} {coin.symbol}
-                      </p>
-                      {!coinExists ? (
-                        <Checkbox
-                          checked={
-                            !!selectedCoins.find((c) => c.id === coin.id)
-                          }
-                          onCheckedChange={(e) => handleToggleCoin(e, coin)}
-                        />
-                      ) : (
-                        <p className="text-[10px]">Added</p>
-                      )}
-                    </Badge>
-                  );
-                })
+                    return (
+                      <Badge
+                        className="py-2 rounded-md w-full flex-container-center justify-between"
+                        key={coin.id}
+                        variant="secondary"
+                      >
+                        <p>
+                          {coin.name} {coin.symbol}
+                        </p>
+                        {!coinExists ? (
+                          <Checkbox
+                            checked={
+                              !!selectedCoins.find((c) => c.id === coin.id)
+                            }
+                            onCheckedChange={(e) => handleToggleCoin(e, coin)}
+                          />
+                        ) : (
+                          <p className="text-[10px]">Added</p>
+                        )}
+                      </Badge>
+                    );
+                  })}
+                </div>
               ) : (
                 <Badge className="py-2" variant="destructive">
                   Coin not found
