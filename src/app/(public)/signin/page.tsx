@@ -10,7 +10,6 @@ import {
 } from "next-auth/react";
 import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import ClipLoader from "react-spinners/ClipLoader";
 import {
   Card,
   CardContent,
@@ -19,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Loader from "@/components/Loader";
 
 const SignIn = () => {
   const { data: session, status } = useSession();
@@ -48,15 +48,7 @@ const SignIn = () => {
   if (loadingProviders || status === "loading") {
     return (
       <div className="wrapper">
-        <ClipLoader
-          color="#fff"
-          loading
-          cssOverride={{
-            display: "block",
-            margin: "0 auto",
-          }}
-          size={100}
-        />
+        <Loader />
       </div>
     );
   }

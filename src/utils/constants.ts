@@ -8,3 +8,8 @@ export const CMC_QUOTE_URL =
 
 export const CMC_MAP_URL =
   "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map?symbol=";
+
+export enum ThemeVariants {
+  dark = "dark",
+  light = "light",
+}

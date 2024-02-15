@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/Loader";
 import {
   Table,
   TableBody,
@@ -15,7 +16,6 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import ClipLoader from "react-spinners/ClipLoader";
 
 export default function Home() {
   const { status } = useSession();
@@ -32,15 +32,7 @@ export default function Home() {
   if (isLoading || status === "loading") {
     return (
       <main className="wrapper">
-        <ClipLoader
-          color="#fff"
-          loading
-          cssOverride={{
-            display: "block",
-            margin: "0 auto",
-          }}
-          size={100}
-        />
+        <Loader />
       </main>
     );
   }

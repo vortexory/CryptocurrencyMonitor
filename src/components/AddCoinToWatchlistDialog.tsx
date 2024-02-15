@@ -21,8 +21,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useWatchlist } from "@/providers/WatchlistProvider";
 import { Checkbox } from "./ui/checkbox";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import ClipLoader from "react-spinners/ClipLoader";
 import { Label } from "./ui/label";
+import Loader from "./Loader";
 
 const AddCoinToWatchlistDialog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -177,15 +177,7 @@ const AddCoinToWatchlistDialog = () => {
 
           <div className="flex flex-col gap-6">
             {isLoading || isFetching ? (
-              <ClipLoader
-                color="#fff"
-                loading
-                cssOverride={{
-                  display: "block",
-                  margin: "0 auto",
-                }}
-                size={50}
-              />
+              <Loader size={50} />
             ) : hasSearched ? (
               coins?.length > 0 ? (
                 <div className="flex flex-col gap-3">

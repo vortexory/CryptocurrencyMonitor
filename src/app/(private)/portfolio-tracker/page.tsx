@@ -38,8 +38,8 @@ import AddEditGoalDialog from "@/components/AddEditGoalDialog";
 import DeletePortfolioDialog from "@/components/DeletePortfolioDialog";
 import Transactions from "@/components/Transactions";
 import { useWallet } from "@/providers/WalletProvider";
-import ClipLoader from "react-spinners/ClipLoader";
 import { redirect } from "next/navigation";
+import Loader from "@/components/Loader";
 
 const page = () => {
   const { data, status } = useSession();
@@ -155,15 +155,7 @@ const page = () => {
   if (isLoading || status === "loading") {
     return (
       <div className="wrapper">
-        <ClipLoader
-          color="#fff"
-          loading
-          cssOverride={{
-            display: "block",
-            margin: "0 auto",
-          }}
-          size={100}
-        />
+        <Loader />
       </div>
     );
   }

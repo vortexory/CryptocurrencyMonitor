@@ -17,13 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Session } from "@/utils/interfaces";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import {
-  ChevronDown,
-  ChevronUp,
-  PenIcon,
-  PlusIcon,
-  StarIcon,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, PlusIcon, StarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
@@ -35,12 +29,12 @@ import {
 import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
 import AddCoinToWatchlistDialog from "@/components/AddCoinToWatchlistDialog";
 import { useWatchlist } from "@/providers/WatchlistProvider";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import EditWatchlistDialog from "@/components/EditWatchlistDialog";
 import { redirect } from "next/navigation";
+import Loader from "@/components/Loader";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -103,15 +97,11 @@ const page = () => {
   }, [session?.user]);
 
   if (status === "loading") {
-    <ClipLoader
-      color="#fff"
-      loading
-      cssOverride={{
-        display: "block",
-        margin: "0 auto",
-      }}
-      size={100}
-    />;
+    return (
+      <div className="wrapper">
+        <Loader />
+      </div>
+    );
   }
 
   if (status === "unauthenticated") {
