@@ -1,19 +1,22 @@
+import { isObjectIdOrHexString } from "mongoose";
+
 import { connectToDB } from "@/utils/database";
+import { validateFields } from "@/utils/serverFunctions";
+
 import User from "@/models/user";
-import mongoose from "mongoose";
 
 export const POST = async (req) => {
   const { userId, watchlistName, description } = await req.json();
 
+  if (!validateFields([userId, watchlistName])) {
+    return new Response("Incomplete information", { status: 400 });
+  }
+
   try {
     await connectToDB();
 
-    if (!userId || !watchlistName) {
-      return new Response("Incomplete information", { status: 400 });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return new Response("Invalid User ID format", { status: 400 });
+    if (!isObjectIdOrHexString(userId)) {
+      return new Response("Invalid userId format", { status: 400 });
     }
 
     const user = await User.findById(userId);
@@ -40,8 +43,6 @@ export const POST = async (req) => {
       }
     );
   } catch (error) {
-    console.log(error);
-
     return new Response("Server error", {
       status: 500,
     });

@@ -1,20 +1,23 @@
+import { isObjectIdOrHexString } from "mongoose";
+
 import { connectToDB } from "@/utils/database";
+import { validateFields } from "@/utils/serverFunctions";
+
 import User from "@/models/user";
-import mongoose from "mongoose";
 
 export const PATCH = async (req) => {
   const { userId, watchlistId, newName, newDescription, main } =
     await req.json();
 
+  if (!validateFields([userId, watchlistId])) {
+    return new Response("Incomplete information", { status: 400 });
+  }
+
   try {
     await connectToDB();
 
-    if (!userId || !watchlistId) {
-      return new Response("Incomplete information", { status: 400 });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return new Response("Invalid User ID format", { status: 400 });
+    if (!isObjectIdOrHexString(userId)) {
+      return new Response("Invalid userId format", { status: 400 });
     }
 
     const user = await User.findById(userId);
@@ -23,8 +26,8 @@ export const PATCH = async (req) => {
       return new Response("User not found", { status: 404 });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(watchlistId)) {
-      return new Response("Invalid Watchlist ID format", { status: 400 });
+    if (!isObjectIdOrHexString(watchlistId)) {
+      return new Response("Invalid walletId format", { status: 400 });
     }
 
     const currentWatchlist = user.watchlists.find(
@@ -67,8 +70,6 @@ export const PATCH = async (req) => {
       }
     );
   } catch (error) {
-    console.log(error);
-
     return new Response("Server error", {
       status: 500,
     });

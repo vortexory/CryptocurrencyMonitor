@@ -1,13 +1,17 @@
+import { isObjectIdOrHexString } from "mongoose";
+
 import { connectToDB } from "@/utils/database";
+
 import User from "@/models/user";
-import mongoose from "mongoose";
 
 export const GET = async (_, { params }) => {
+  const { userId } = params;
+
   try {
     await connectToDB();
 
-    if (!mongoose.Types.ObjectId.isValid(params.userId)) {
-      return new Response("Invalid User ID format", { status: 400 });
+    if (!isObjectIdOrHexString(userId)) {
+      return new Response("Invalid userId format", { status: 400 });
     }
 
     const user = await User.findById(params.userId);
@@ -22,7 +26,7 @@ export const GET = async (_, { params }) => {
       status: 200,
     });
   } catch (error) {
-    return new Response("Failed to send user wallets", {
+    return new Response("Server error", {
       status: 500,
     });
   }

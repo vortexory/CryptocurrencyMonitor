@@ -1,34 +1,39 @@
+import { isObjectIdOrHexString } from "mongoose";
+
 import { connectToDB } from "@/utils/database";
+import { validateFields } from "@/utils/serverFunctions";
+
 import User from "@/models/user";
-import mongoose from "mongoose";
 
 export const POST = async (req) => {
   const { userId, walletId, coinApiID, quantity, pricePerCoin, type } =
     await req.json();
 
+  if (
+    !validateFields([userId, walletId, coinApiID, quantity, pricePerCoin, type])
+  ) {
+    return new Response("Incomplete information", { status: 400 });
+  }
+
+  if (type !== "buy" && type !== "sell") {
+    return new Response("Invalid type", { status: 400 });
+  }
+
   try {
     await connectToDB();
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return new Response("Invalid User ID format", { status: 400 });
+    if (!isObjectIdOrHexString(userId)) {
+      return new Response("Invalid userId format", { status: 400 });
     }
 
     const user = await User.findById(userId);
-
-    if (!coinApiID || !quantity || !pricePerCoin || !type) {
-      return new Response("Incomplete information", { status: 400 });
-    }
-
-    if (type !== "buy" && type !== "sell") {
-      return new Response("Invalid type", { status: 400 });
-    }
 
     if (!user) {
       return new Response("User not found", { status: 404 });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(walletId)) {
-      return new Response("Invalid Wallet ID format", { status: 400 });
+    if (!isObjectIdOrHexString(walletId)) {
+      return new Response("Invalid walletId format", { status: 400 });
     }
 
     const currentWallet = user.wallets.find(
@@ -81,9 +86,7 @@ export const POST = async (req) => {
       status: 201,
     });
   } catch (error) {
-    console.log(error);
-
-    return new Response("Failed to add transaction", {
+    return new Response("Server error", {
       status: 500,
     });
   }

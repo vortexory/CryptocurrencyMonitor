@@ -1,15 +1,22 @@
+import { isObjectIdOrHexString } from "mongoose";
+
 import { connectToDB } from "@/utils/database";
+import { validateFields } from "@/utils/serverFunctions";
+
 import User from "@/models/user";
-import mongoose from "mongoose";
 
 export const PATCH = async (req) => {
   const { userId, walletId } = await req.json();
 
+  if (!validateFields([userId, walletId])) {
+    return new Response("Incomplete information", { status: 400 });
+  }
+
   try {
     await connectToDB();
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return new Response("Invalid User ID format", { status: 400 });
+    if (!isObjectIdOrHexString(userId)) {
+      return new Response("Invalid userId format", { status: 400 });
     }
 
     const user = await User.findById(userId);
@@ -18,8 +25,8 @@ export const PATCH = async (req) => {
       return new Response("User not found", { status: 404 });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(walletId)) {
-      return new Response("Invalid Wallet ID format", { status: 400 });
+    if (!isObjectIdOrHexString(walletId)) {
+      return new Response("Invalid wallet format", { status: 400 });
     }
 
     const currentWalletIndex = user.wallets.findIndex(
@@ -38,7 +45,7 @@ export const PATCH = async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response("Failed to delete wallet", {
+    return new Response("Server error", {
       status: 500,
     });
   }

@@ -59,7 +59,7 @@ const AddTransactionDialog = ({
 
   const { data: coin, isLoading } = useQuery({
     queryFn: async () => {
-      const response = await axios.get(`/api/coin/get-value/${coinApiID}`);
+      const response = await axios.get(`/api/external/get-value/${coinApiID}`);
 
       return response.data;
     },

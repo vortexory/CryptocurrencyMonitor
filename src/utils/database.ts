@@ -14,8 +14,6 @@ export const connectToDB = async () => {
     if (process.env.MONGODB_URI) {
       await mongoose.connect(process.env.MONGODB_URI, {
         dbName: "crypto-wallet",
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
       } as ConnectOptions);
 
       isConnected = true;
