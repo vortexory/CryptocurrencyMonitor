@@ -14,11 +14,19 @@ const handler = NextAuth({
   ],
   callbacks: {
     async session({ session }) {
-      const sessionUser = await User.findOne({ email: session.user.email });
+      try {
+        await connectToDB();
 
-      session.user.id = sessionUser._id.toString();
-      session.user.walletsValueGoal = sessionUser.walletsValueGoal;
-      session.user.watchlists = sessionUser.watchlists;
+        const sessionUser = await User.findOne({ email: session.user.email });
+
+        if (sessionUser) {
+          session.user.id = sessionUser._id.toString();
+          session.user.walletsValueGoal = sessionUser.walletsValueGoal;
+          session.user.watchlists = sessionUser.watchlists;
+        }
+      } catch (error) {
+        console.error("Error retrieving user session:", error);
+      }
 
       return session;
     },
