@@ -151,7 +151,11 @@ const AddCoinToWatchlistDialog = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <Button onClick={() => setIsModalOpen(true)}>
+      <Button
+        onClick={() => setIsModalOpen(true)}
+        variant="outline"
+        className="w-full md:w-fit mx-auto"
+      >
         <PlusIcon className="mr-2" /> Add asset
       </Button>
       <DialogContent className="sm:max-w-md">

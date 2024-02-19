@@ -35,6 +35,7 @@ import { toast } from "@/components/ui/use-toast";
 import EditWatchlistDialog from "@/components/EditWatchlistDialog";
 import { redirect } from "next/navigation";
 import Loader from "@/components/Loader";
+import DeleteWatchlistDialog from "@/components/DeleteWatchlistDialog";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -110,8 +111,8 @@ const page = () => {
 
   return (
     <div className="wrapper">
-      <div className="flex flex-col sm:flex-row justify-between gap-6">
-        <div className="w-full sm:w-2/3">
+      <div className="flex flex-col md:flex-row justify-between gap-6">
+        <div className="w-full md:w-2/3">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropDownOpen}>
             <DropdownMenuTrigger className="outline-none ring-0">
               <div className="flex-container-center gap-1">
@@ -171,49 +172,52 @@ const page = () => {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
-          <AddCoinToWatchlistDialog />
+        <div className="flex flex-col md:flex-row gap-4">
           <EditWatchlistDialog />
+          <DeleteWatchlistDialog />
         </div>
       </div>
 
       <div className="mt-12">
         {selectedWatchlist?.coins.length ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead className="text-right">#</TableHead>
-                <TableHead className="text-right">Name</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {selectedWatchlist.coins.map((coin) => (
-                <TableRow key={coin.id}>
-                  <TableCell className="w-14">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <StarIcon
-                            className="h-5 w-5 text-[#f6b97e] cursor-pointer"
-                            fill="#f6b97e"
-                            onClick={() => handleRemoveCoin(coin.id)}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Remove from watchlist</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell className="w-14" align="right">
-                    {coin.cmcRank}
-                  </TableCell>
-                  <TableCell align="right">{coin.name}</TableCell>
+          <div className="flex flex-col gap-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead></TableHead>
+                  <TableHead className="text-right">#</TableHead>
+                  <TableHead className="text-right">Name</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {selectedWatchlist.coins.map((coin) => (
+                  <TableRow key={coin.id}>
+                    <TableCell className="w-14">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <StarIcon
+                              className="h-5 w-5 text-[#f6b97e] cursor-pointer"
+                              fill="#f6b97e"
+                              onClick={() => handleRemoveCoin(coin.id)}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Remove from watchlist</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                    <TableCell className="w-14" align="right">
+                      {coin.cmcRank}
+                    </TableCell>
+                    <TableCell align="right">{coin.name}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <AddCoinToWatchlistDialog />
+          </div>
         ) : (
           <p>This list does not contain any coins yet.</p>
         )}

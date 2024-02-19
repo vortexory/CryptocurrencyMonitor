@@ -15,6 +15,7 @@ type WatchlistContext = {
   selectedWatchlist: Watchlist | null;
   setWatchlists: Dispatch<SetStateAction<Watchlist[]>>;
   setSelectedWatchlist: Dispatch<SetStateAction<Watchlist | null>>;
+  setMainWatchlistAsSelected: () => void;
 };
 
 const WatchlistContext = createContext<WatchlistContext | null>(null);
@@ -39,6 +40,14 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
     null
   );
 
+  const setMainWatchlistAsSelected = () => {
+    const mainWatchlist = watchlists.find((watchlist) => watchlist.main);
+
+    if (mainWatchlist) {
+      setSelectedWatchlist(mainWatchlist);
+    }
+  };
+
   return (
     <WatchlistContext.Provider
       value={{
@@ -46,6 +55,7 @@ export function WatchlistProvider({ children }: WatchlistProviderProps) {
         selectedWatchlist,
         setWatchlists,
         setSelectedWatchlist,
+        setMainWatchlistAsSelected,
       }}
     >
       {children}

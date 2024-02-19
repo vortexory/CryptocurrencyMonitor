@@ -71,8 +71,12 @@ const CreatePortfolioDialog = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <Button variant="outline" onClick={() => setIsModalOpen(true)}>
-        <PlusIcon className="mr-2" /> Create portfolio
+      <Button
+        variant="outline"
+        onClick={() => setIsModalOpen(true)}
+        className="w-full md:w-fit"
+      >
+        <PlusIcon className="mr-2 " /> Create portfolio
       </Button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
