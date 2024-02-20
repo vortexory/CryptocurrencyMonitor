@@ -25,17 +25,17 @@ export const POST = async (req) => {
       return new Response("User not found", { status: 404 });
     }
 
-    const newWallet = {
+    user.wallets.push({
       name: walletName,
       coins: [],
       totalValue: 0,
-    };
-
-    user.wallets.push(newWallet);
+    });
 
     await user.save();
 
-    return new Response(JSON.stringify(user), {
+    const newWallet = user.wallets[user.wallets.length - 1];
+
+    return new Response(JSON.stringify(newWallet), {
       status: 201,
     });
   } catch (error) {

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/Loader";
+import Image from "next/image";
 
 const SignIn = () => {
   const { data: session, status } = useSession();
@@ -72,7 +73,12 @@ const SignIn = () => {
               onClick={() => signIn(provider.id)}
               className="mx-auto flex-container-center gap-2"
             >
-              <img src="/google.svg" alt="google-icon" className="max-h-full" />
+              <Image
+                src="/google.svg"
+                width={24}
+                height={24}
+                alt="google-icon"
+              />
               Sign in with {provider.name}
             </Button>
           ))}

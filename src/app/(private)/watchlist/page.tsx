@@ -36,6 +36,8 @@ import EditWatchlistDialog from "@/components/EditWatchlistDialog";
 import { redirect } from "next/navigation";
 import Loader from "@/components/Loader";
 import DeleteWatchlistDialog from "@/components/DeleteWatchlistDialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +48,7 @@ const page = () => {
     useWatchlist();
 
   const session = data as Session;
+  const hasCoinsAdded = (selectedWatchlist?.coins.length ?? 0) > 0;
 
   const { mutateAsync } = useMutation({
     mutationFn: (payload: {
@@ -108,6 +111,8 @@ const page = () => {
   if (status === "unauthenticated") {
     return redirect("/signin");
   }
+
+  console.log(selectedWatchlist?.coins);
 
   return (
     <div className="wrapper">
@@ -179,48 +184,77 @@ const page = () => {
       </div>
 
       <div className="mt-12">
-        {selectedWatchlist?.coins.length ? (
-          <div className="flex flex-col gap-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead></TableHead>
-                  <TableHead className="text-right">#</TableHead>
-                  <TableHead className="text-right">Name</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedWatchlist.coins.map((coin) => (
-                  <TableRow key={coin.id}>
-                    <TableCell className="w-14">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <StarIcon
-                              className="h-5 w-5 text-[#f6b97e] cursor-pointer"
-                              fill="#f6b97e"
-                              onClick={() => handleRemoveCoin(coin.id)}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Remove from watchlist</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </TableCell>
-                    <TableCell className="w-14" align="right">
-                      {coin.cmcRank}
-                    </TableCell>
-                    <TableCell align="right">{coin.name}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <AddCoinToWatchlistDialog />
-          </div>
-        ) : (
-          <p>This list does not contain any coins yet.</p>
-        )}
+        <div className="flex flex-col gap-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead></TableHead>
+                <TableHead className="text-right">#</TableHead>
+                <TableHead className="text-right">Name</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {hasCoinsAdded
+                ? selectedWatchlist?.coins.map((coin) => (
+                    <TableRow key={coin.id}>
+                      <TableCell className="w-14">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <StarIcon
+                                className="h-5 w-5 text-[#f6b97e] cursor-pointer"
+                                fill="#f6b97e"
+                                onClick={() => handleRemoveCoin(coin.id)}
+                              />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Remove from watchlist</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                      <TableCell className="w-14" align="right">
+                        {coin.cmcRank}
+                      </TableCell>
+                      <TableCell align="right">{coin.name}</TableCell>
+                    </TableRow>
+                  ))
+                : Array.from({ length: 10 }, (_, index) => (
+                    <TableRow key={index} className="hover:bg-background">
+                      <TableCell className="w-14">
+                        <Skeleton className="h-6 w-6 ml-auto" />
+                      </TableCell>
+                      <TableCell className="w-14">
+                        <Skeleton className="h-4 w-16 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+            </TableBody>
+            {!hasCoinsAdded && (
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+                <Image
+                  src="/watchlist-illustration.svg"
+                  width={300}
+                  height={300}
+                  alt="Illustration"
+                />
+                <div className="flex flex-col items-center gap-4">
+                  <h4 className="text-2xl font-bold">
+                    This watchlist needs some final touches…
+                  </h4>
+                  <p className="text-sm text-muted-foreground font-bold">
+                    Add a coin to get started
+                  </p>
+                  <AddCoinToWatchlistDialog />
+                </div>
+              </div>
+            )}
+          </Table>
+          {hasCoinsAdded && <AddCoinToWatchlistDialog />}
+        </div>
       </div>
     </div>
   );

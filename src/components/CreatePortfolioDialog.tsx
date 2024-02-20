@@ -8,18 +8,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { Session } from "@/utils/interfaces";
+import { Session, UserWallet } from "@/utils/interfaces";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
 import { Label } from "./ui/label";
 
-const CreatePortfolioDialog = () => {
+const CreatePortfolioDialog = ({
+  setSelectedWallet,
+}: {
+  setSelectedWallet: Dispatch<SetStateAction<UserWallet | null>>;
+}) => {
   const [walletName, setWalletName] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,8 +39,9 @@ const CreatePortfolioDialog = () => {
     mutationFn: (newWallet: { userId: string; walletName: string }) => {
       return axios.post("/api/wallet/new", newWallet);
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["wallets"] });
+      setSelectedWallet(res.data);
       toast({
         title: "Wallet created",
         description: "Your wallet has been created successfully.",

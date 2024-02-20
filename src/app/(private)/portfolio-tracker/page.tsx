@@ -40,6 +40,8 @@ import Transactions from "@/components/Transactions";
 import { useWallet } from "@/providers/WalletProvider";
 import { redirect } from "next/navigation";
 import Loader from "@/components/Loader";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 
 const page = () => {
   const { data, status } = useSession();
@@ -189,7 +191,7 @@ const page = () => {
               />
             ))}
           </div>
-          <CreatePortfolioDialog />
+          <CreatePortfolioDialog setSelectedWallet={setSelectedWallet} />
         </div>
       </div>
       <div className="flex-[4] flex flex-col gap-12">
@@ -298,7 +300,7 @@ const page = () => {
             <h5 className="text-center md:text-start">Assets</h5>
 
             <div className="flex flex-col gap-4">
-              <Table>
+              <Table className="relative">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
@@ -320,50 +322,100 @@ const page = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {coinsToDisplay.map((coin) => {
-                    return (
-                      <TableRow key={coin._id}>
-                        <TableCell>{coin.name}</TableCell>
-                        <TableCell className="text-right">
-                          {coin.totalQuantity}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatPrice(
-                            calculateAvgPrices(coin.transactions).avgBuyPrice
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {calculateAvgPrices(coin.transactions).avgSellPrice
-                            ? formatPrice(
-                                calculateAvgPrices(coin.transactions)
-                                  .avgSellPrice
-                              )
-                            : "-"}
-                        </TableCell>
-                        {selectedWallet && (
-                          <TableCell className="text-right">
-                            <ActionsCell
-                              handleDeleteCoin={handleDeleteCoin}
-                              walletId={selectedWallet._id}
-                              coinApiID={coin.coinApiID}
-                              selectedWallet={selectedWallet}
-                              setSelectedWallet={setSelectedWallet}
-                              name={coin.name}
-                              transactions={coin.transactions}
-                              quantity={coin.totalQuantity}
-                              avgBuyPrice={
+                  {coinsToDisplay.length > 0
+                    ? coinsToDisplay.map((coin) => {
+                        return (
+                          <TableRow key={coin._id}>
+                            <TableCell>{coin.name}</TableCell>
+                            <TableCell className="text-right">
+                              {coin.totalQuantity}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {formatPrice(
                                 calculateAvgPrices(coin.transactions)
                                   .avgBuyPrice
-                              }
-                            />
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {calculateAvgPrices(coin.transactions)
+                                .avgSellPrice
+                                ? formatPrice(
+                                    calculateAvgPrices(coin.transactions)
+                                      .avgSellPrice
+                                  )
+                                : "-"}
+                            </TableCell>
+                            {selectedWallet && (
+                              <TableCell className="text-right">
+                                <ActionsCell
+                                  handleDeleteCoin={handleDeleteCoin}
+                                  walletId={selectedWallet._id}
+                                  coinApiID={coin.coinApiID}
+                                  selectedWallet={selectedWallet}
+                                  setSelectedWallet={setSelectedWallet}
+                                  name={coin.name}
+                                  transactions={coin.transactions}
+                                  quantity={coin.totalQuantity}
+                                  avgBuyPrice={
+                                    calculateAvgPrices(coin.transactions)
+                                      .avgBuyPrice
+                                  }
+                                />
+                              </TableCell>
+                            )}
+                          </TableRow>
+                        );
+                      })
+                    : Array.from({ length: 6 }, (_, index) => (
+                        <TableRow key={index} className="hover:bg-background">
+                          <TableCell>
+                            <div className="flex-container-center gap-4">
+                              <Skeleton className="h-12 w-12 rounded-full" />
+                              <Skeleton className="h-4 w-36" />
+                            </div>
                           </TableCell>
-                        )}
-                      </TableRow>
-                    );
-                  })}
+                          <TableCell>
+                            <Skeleton className="h-4 w-24 ml-auto" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-24 ml-auto" />
+                          </TableCell>
+                          <TableCell>
+                            <Skeleton className="h-4 w-24 ml-auto" />
+                          </TableCell>
+                          {selectedWallet && (
+                            <TableCell>
+                              <Skeleton className="h-4 w-24 ml-auto" />
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      ))}
+
+                  {coinsToDisplay.length === 0 && (
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+                      <Image
+                        src="/portfolio-illustration.svg"
+                        width={300}
+                        height={300}
+                        alt="Illustration"
+                      />
+                      <div className="flex flex-col items-center gap-4">
+                        <h4 className="text-2xl font-bold">
+                          This portfolio needs some final touches…
+                        </h4>
+                        <p className="text-sm text-muted-foreground font-bold">
+                          Add a coin to get started
+                        </p>
+                        <AddCoinDialog
+                          walletId={selectedWallet?._id}
+                          setSelectedWallet={setSelectedWallet}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </TableBody>
               </Table>
-              {selectedWallet && (
+              {selectedWallet && coinsToDisplay.length > 0 && (
                 <AddCoinDialog
                   walletId={selectedWallet?._id}
                   setSelectedWallet={setSelectedWallet}
