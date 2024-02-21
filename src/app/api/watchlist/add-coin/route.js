@@ -42,10 +42,18 @@ export const POST = async (req) => {
 
     for (const coin of coins) {
       if (
-        !coin.id ||
-        !coin.name ||
-        coin.cmcRank === undefined ||
-        coin.cmcRank === null
+        !validateFields([
+          coin.id,
+          coin.name,
+          coin.cmcRank,
+          coin.price,
+          coin.oneHourChange,
+          coin.oneDayChange,
+          coin.sevenDaysChange,
+          coin.oneDayVolume,
+          coin.marketCap,
+          coin.circulatingSupply,
+        ])
       ) {
         invalidFormat = true;
         break;
@@ -62,6 +70,13 @@ export const POST = async (req) => {
         id: coin.id,
         name: coin.name,
         cmcRank: coin.cmcRank,
+        price: coin.price,
+        oneHourChange: coin.oneHourChange,
+        oneDayChange: coin.oneDayChange,
+        sevenDaysChange: coin.sevenDaysChange,
+        oneDayVolume: coin.oneDayVolume,
+        marketCap: coin.marketCap,
+        circulatingSupply: coin.circulatingSupply,
       });
     }
 

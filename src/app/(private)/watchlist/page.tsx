@@ -38,6 +38,7 @@ import Loader from "@/components/Loader";
 import DeleteWatchlistDialog from "@/components/DeleteWatchlistDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
+import { formatAsCurrency, formatPrice } from "@/utils/functions";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -112,8 +113,6 @@ const page = () => {
     return redirect("/signin");
   }
 
-  console.log(selectedWatchlist?.coins);
-
   return (
     <div className="wrapper">
       <div className="flex flex-col md:flex-row justify-between gap-6">
@@ -185,19 +184,26 @@ const page = () => {
 
       <div className="mt-12">
         <div className="flex flex-col gap-4">
-          <Table>
+          <Table className="relative">
             <TableHeader>
               <TableRow>
                 <TableHead></TableHead>
-                <TableHead className="text-right">#</TableHead>
-                <TableHead className="text-right">Name</TableHead>
+                <TableHead>#</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-right">1h %</TableHead>
+                <TableHead className="text-right">24h %</TableHead>
+                <TableHead className="text-right">7d %</TableHead>
+                <TableHead className="text-right">Market Cap</TableHead>
+                <TableHead className="text-right">Volume (24h)</TableHead>
+                <TableHead className="text-right">Circulating Supply</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {hasCoinsAdded
                 ? selectedWatchlist?.coins.map((coin) => (
                     <TableRow key={coin.id}>
-                      <TableCell className="w-14">
+                      <TableCell>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
@@ -213,19 +219,80 @@ const page = () => {
                           </Tooltip>
                         </TooltipProvider>
                       </TableCell>
-                      <TableCell className="w-14" align="right">
-                        {coin.cmcRank}
+                      <TableCell>{coin.cmcRank}</TableCell>
+                      <TableCell>{coin.name}</TableCell>
+                      <TableCell align="right">
+                        {formatPrice(coin.price)}
                       </TableCell>
-                      <TableCell align="right">{coin.name}</TableCell>
+                      <TableCell
+                        align="right"
+                        className={
+                          coin.oneHourChange >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {formatPrice(coin.oneHourChange, false)}%
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        className={
+                          coin.oneDayChange >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {formatPrice(coin.oneDayChange, false)}%
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        className={
+                          coin.sevenDaysChange >= 0
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }
+                      >
+                        {formatPrice(coin.sevenDaysChange, false)}%
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatAsCurrency(+coin.marketCap.toFixed(2))}
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatAsCurrency(+coin.oneDayVolume.toFixed(2))}
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatAsCurrency(+coin.circulatingSupply.toFixed(2))}
+                      </TableCell>
                     </TableRow>
                   ))
                 : Array.from({ length: 10 }, (_, index) => (
                     <TableRow key={index} className="hover:bg-background">
-                      <TableCell className="w-14">
-                        <Skeleton className="h-6 w-6 ml-auto" />
+                      <TableCell>
+                        <Skeleton className="h-4 w-4" />
                       </TableCell>
-                      <TableCell className="w-14">
-                        <Skeleton className="h-4 w-16 ml-auto" />
+                      <TableCell>
+                        <Skeleton className="h-4 w-12" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24 ml-auto" />
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-4 w-24 ml-auto" />

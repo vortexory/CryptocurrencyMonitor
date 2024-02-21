@@ -14,7 +14,7 @@ import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
-import { CoinData, Session } from "@/utils/interfaces";
+import { CoinData, Session, WatchlistCoin } from "@/utils/interfaces";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,6 +34,13 @@ const AddCoinToWatchlistDialog = () => {
       id: number;
       name: string;
       cmcRank: number;
+      price: number;
+      oneHourChange: number;
+      oneDayChange: number;
+      sevenDaysChange: number;
+      oneDayVolume: number;
+      marketCap: number;
+      circulatingSupply: number;
     }[]
   >([]);
 
@@ -64,11 +71,7 @@ const AddCoinToWatchlistDialog = () => {
     mutationFn: (payload: {
       userId: string;
       watchlistId: string;
-      coins: {
-        id: number;
-        name: string;
-        cmcRank: number;
-      }[];
+      coins: Array<WatchlistCoin>;
     }) => {
       return axios.post("/api/watchlist/add-coin", payload);
     },
@@ -107,6 +110,13 @@ const AddCoinToWatchlistDialog = () => {
           id: coin.id ?? 0,
           name: `${coin.name} ${coin.symbol}`,
           cmcRank: coin.cmc_rank ?? 0,
+          price: coin.quote.USD.price ?? 0,
+          oneHourChange: coin.quote.USD.percent_change_1h ?? 0,
+          oneDayChange: coin.quote.USD.percent_change_24h ?? 0,
+          sevenDaysChange: coin.quote.USD.percent_change_7d ?? 0,
+          oneDayVolume: coin.quote.USD.volume_24h ?? 0,
+          marketCap: coin.quote.USD.market_cap ?? 0,
+          circulatingSupply: coin.circulating_supply ?? 0,
         },
       ]);
     } else {

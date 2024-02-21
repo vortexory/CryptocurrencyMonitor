@@ -9,7 +9,20 @@ const WatchlistSchema = new Schema({
     type: String,
   },
   coins: {
-    type: [{ id: Number, name: String, cmcRank: Number }],
+    type: [
+      {
+        id: Number,
+        name: String,
+        cmcRank: Number,
+        circulatingSupply: Number,
+        marketCap: Number,
+        oneDayChange: Number,
+        oneDayVolume: Number,
+        oneHourChange: Number,
+        price: Number,
+        sevenDaysChange: Number,
+      },
+    ],
     default: [],
   },
   main: {

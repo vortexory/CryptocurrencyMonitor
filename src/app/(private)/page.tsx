@@ -56,7 +56,7 @@ export default function Home() {
             <TableHead>24h %</TableHead>
             <TableHead>7d %</TableHead>
             <TableHead>Market Cap</TableHead>
-            <TableHead>Volume(24h)</TableHead>
+            <TableHead>Volume (24h)</TableHead>
             <TableHead>Circulating Supply</TableHead>
           </TableRow>
         </TableHeader>

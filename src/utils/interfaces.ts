@@ -55,11 +55,24 @@ export interface SelectedCoinInfo {
   pricePerCoin: number;
 }
 
+export interface WatchlistCoin {
+  name: string;
+  id: number;
+  cmcRank: number;
+  price: number;
+  oneHourChange: number;
+  oneDayChange: number;
+  sevenDaysChange: number;
+  oneDayVolume: number;
+  marketCap: number;
+  circulatingSupply: number;
+}
+
 export interface Watchlist {
   name: string;
   description: string;
   _id: string;
-  coins: Array<{ name: string; id: number; cmcRank: number }>;
+  coins: Array<WatchlistCoin>;
   main: boolean;
 }
 
