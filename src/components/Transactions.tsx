@@ -13,7 +13,13 @@ import {
   TableRow,
 } from "./ui/table";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { formatDate, formatPrice } from "@/utils/functions";
+import {
+  calculateBoughtQty,
+  calculateTotalSold,
+  extractLastWord,
+  formatDate,
+  formatPrice,
+} from "@/utils/functions";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Loader from "./Loader";
@@ -42,7 +48,16 @@ const Transactions = ({
     queryKey: ["coin"],
   });
 
-  const isProfitable = data?.liveValue - avgBuyPrice > 0;
+  const totalSpent = (calculateBoughtQty(transactions) * avgBuyPrice).toFixed(
+    2
+  );
+  const liveValue = (quantity * data?.liveValue).toFixed(2);
+  const totalSold = calculateTotalSold(transactions);
+
+  const difference = (+liveValue + totalSold - +totalSpent).toFixed(2);
+
+  const isProfitable = +difference > 0;
+  const percentage = (+difference / +totalSpent) * 100;
 
   useEffect(() => {
     setTransactionsView({
@@ -84,7 +99,7 @@ const Transactions = ({
             <CardDescription className="font-bold">Quantity</CardDescription>
           </CardHeader>
           <CardContent className="text-2xl">
-            {quantity} {name}
+            {quantity} {extractLastWord(name)}
           </CardContent>
         </Card>
         <Card className="flex-1">
@@ -108,7 +123,8 @@ const Transactions = ({
               isProfitable ? "text-green-500" : "text-red-500"
             }`}
           >
-            {formatPrice(data.liveValue - avgBuyPrice)}
+            {isProfitable && "+"}
+            {formatPrice(+difference)}
 
             <div className="mt-2 flex-container-center gap-[2px]">
               {isProfitable ? (
@@ -121,11 +137,7 @@ const Transactions = ({
                   isProfitable ? "text-green-500" : "text-red-500"
                 }`}
               >
-                {formatPrice(
-                  ((data.liveValue - avgBuyPrice) / avgBuyPrice) * 100,
-                  false
-                )}
-                %
+                {formatPrice(percentage, false)}%
               </p>
             </div>
           </CardContent>

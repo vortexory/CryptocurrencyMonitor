@@ -94,6 +94,18 @@ const page = () => {
     },
   });
 
+  const getGeneralWalletColor = () => {
+    const index =
+      userWallets?.findIndex((wallet) => wallet._id === selectedWallet?._id) ??
+      -1;
+
+    if (index !== -1) {
+      return getColorByIndex(index + 1);
+    } else {
+      return "#5178ff";
+    }
+  };
+
   const totalWalletsValue =
     userWallets?.reduce((sum, wallet) => sum + wallet.totalValue, 0) ?? 0;
 
@@ -209,7 +221,9 @@ const page = () => {
               <div className="flex flex-col items-center md:items-start">
                 <div className="flex-container-center gap-2">
                   <Avatar>
-                    <AvatarFallback>
+                    <AvatarFallback
+                      style={{ backgroundColor: getGeneralWalletColor() }}
+                    >
                       {selectedWallet ? selectedWallet.name.charAt(0) : "O"}
                     </AvatarFallback>
                   </Avatar>
@@ -224,12 +238,10 @@ const page = () => {
                 </h3>
               </div>
 
-              {selectedWallet && (
-                <DeletePortfolioDialog
-                  selectedWallet={selectedWallet}
-                  setSelectedWallet={setSelectedWallet}
-                />
-              )}
+              <DeletePortfolioDialog
+                selectedWallet={selectedWallet}
+                setSelectedWallet={setSelectedWallet}
+              />
             </div>
 
             <div className="w-full md:w-2/3 flex flex-col gap-4">

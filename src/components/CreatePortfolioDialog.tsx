@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
@@ -74,14 +74,20 @@ const CreatePortfolioDialog = ({
     }
   };
 
+  useEffect(() => {
+    if (!isModalOpen) {
+      setWalletName("");
+    }
+  }, [isModalOpen]);
+
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <Button
         variant="outline"
         onClick={() => setIsModalOpen(true)}
-        className="w-full md:w-fit"
+        className="w-full md:w-fit lg:w-full"
       >
-        <PlusIcon className="mr-2 " /> Create portfolio
+        <PlusIcon className="mr-2" /> Create portfolio
       </Button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

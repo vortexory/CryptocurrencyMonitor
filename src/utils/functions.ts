@@ -132,3 +132,33 @@ export const formatDate = (createdAt: string) => {
   const formattedDate = date.toLocaleString("en-US", options);
   return formattedDate;
 };
+
+export const extractLastWord = (string: string) => {
+  const words = string.trim().split(" ");
+
+  return words[words.length - 1];
+};
+
+export const calculateTotalSold = (transactions: Transaction[]) => {
+  const sellTransactions = transactions.filter(
+    (transaction) => transaction.type === "sell"
+  );
+
+  const costArray = sellTransactions.map(
+    (transaction) => transaction.pricePerCoin * transaction.quantity
+  );
+  const totalCost = costArray.reduce((acc, currentVal) => acc + currentVal, 0);
+
+  return +totalCost.toFixed(2);
+};
+
+export const calculateBoughtQty = (transactions: Transaction[]) => {
+  const buyTransactions = transactions.filter(
+    (transaction) => transaction.type === "buy"
+  );
+
+  const costArray = buyTransactions.map((transaction) => transaction.quantity);
+  const totalQty = costArray.reduce((acc, currentVal) => acc + currentVal, 0);
+
+  return +totalQty;
+};

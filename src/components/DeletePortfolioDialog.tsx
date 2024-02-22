@@ -66,6 +66,8 @@ const DeletePortfolioDialog = ({
       }
     } catch (error) {
       console.error("Error deleting wallet", error);
+    } finally {
+      setIsModalOpen(false);
     }
   };
 
@@ -75,8 +77,9 @@ const DeletePortfolioDialog = ({
         className="w-full md:w-fit"
         variant="destructive"
         onClick={() => setIsModalOpen(true)}
+        disabled={!selectedWallet}
       >
-        Delete wallet
+        Delete portfolio
       </Button>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
