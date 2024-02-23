@@ -22,6 +22,7 @@ import {
 import { BuiltInProviderType } from "next-auth/providers/index";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import {
   Sheet,
@@ -29,6 +30,12 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
+const navLinks = [
+  { name: "Home", href: "/" },
+  { name: "Portfolio Tracker", href: "/portfolio-tracker" },
+  { name: "Watchlist", href: "/watchlist" },
+];
 
 const Navigation = () => {
   const { data: session } = useSession();
@@ -40,6 +47,8 @@ const Navigation = () => {
   const handleAuthentication = () => {
     session?.user ? signOut() : providers && signIn();
   };
+
+  const pathname = usePathname();
 
   useEffect(() => {
     const setUpProviders = async () => {
@@ -60,26 +69,21 @@ const Navigation = () => {
           </SheetTrigger>
           <SheetContent side="top" className="py-12">
             <div className="flex flex-col gap-2 items-center">
-              <Link
-                href="/"
-                className="border-b border-transparent hover:border-foreground"
-              >
-                <SheetClose>Home</SheetClose>
-              </Link>
-
-              <Link
-                href="/portfolio-tracker"
-                className="border-b border-transparent hover:border-foreground"
-              >
-                <SheetClose>Portfolio Tracker</SheetClose>
-              </Link>
-
-              <Link
-                href="/watchlist"
-                className="border-b border-transparent hover:border-foreground"
-              >
-                <SheetClose>Watchlist</SheetClose>
-              </Link>
+              {navLinks.map((link) => {
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`border-b ${
+                      pathname === link.href
+                        ? "border-foreground"
+                        : "border-transparent"
+                    } hover:border-foreground transition-all duration-300`}
+                  >
+                    <SheetClose>{link.name}</SheetClose>
+                  </Link>
+                );
+              })}
             </div>
             <div className="mt-4 flex-container-center justify-center gap-4 w-full">
               <ModeToggle />
@@ -92,24 +96,21 @@ const Navigation = () => {
       </div>
 
       <div className="hidden sm:flex-container-center gap-6">
-        <Link
-          href="/"
-          className="border-b border-transparent hover:border-foreground"
-        >
-          Home
-        </Link>
-        <Link
-          href="/portfolio-tracker"
-          className="border-b border-transparent hover:border-foreground"
-        >
-          Portfolio Tracker
-        </Link>
-        <Link
-          href="/watchlist"
-          className="border-b border-transparent hover:border-foreground"
-        >
-          Watchlist
-        </Link>
+        {navLinks.map((link) => {
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`border-b ${
+                pathname === link.href
+                  ? "border-foreground"
+                  : "border-transparent"
+              } hover:border-foreground transition-all duration-300`}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
       </div>
       <div className="hidden sm:flex-container-center gap-4">
         <ModeToggle />

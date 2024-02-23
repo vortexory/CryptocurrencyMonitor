@@ -65,23 +65,25 @@ const SignIn = () => {
             Please choose a way to sign in
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col">
-          {Object.values(providers ?? {}).map((provider) => (
-            <Button
-              variant="secondary"
-              key={provider.name}
-              onClick={() => signIn(provider.id)}
-              className="mx-auto flex-container-center gap-2"
-            >
-              <Image
-                src="/google.svg"
-                width={24}
-                height={24}
-                alt="google-icon"
-              />
-              Sign in with {provider.name}
-            </Button>
-          ))}
+        <CardContent className="flex flex-col gap-3">
+          {Object.values(providers ?? {}).map((provider) => {
+            return (
+              <Button
+                variant="secondary"
+                key={provider.name}
+                onClick={() => signIn(provider.id)}
+                className="mx-auto flex-container-center gap-2 w-full"
+              >
+                <Image
+                  src={provider.id === "google" ? "/google.svg" : "/github.svg"}
+                  width={25}
+                  height={25}
+                  alt={provider.id === "google" ? "google-icon" : "github-icon"}
+                />
+                Sign in with {provider.name}
+              </Button>
+            );
+          })}
         </CardContent>
       </Card>
     </div>

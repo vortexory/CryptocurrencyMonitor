@@ -184,122 +184,126 @@ const page = () => {
 
       <div className="mt-12">
         <div className="flex flex-col gap-4">
-          <Table className="relative">
-            <TableHeader>
-              <TableRow>
-                <TableHead></TableHead>
-                <TableHead>#</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">1h %</TableHead>
-                <TableHead className="text-right">24h %</TableHead>
-                <TableHead className="text-right">7d %</TableHead>
-                <TableHead className="text-right">Market Cap</TableHead>
-                <TableHead className="text-right">Volume (24h)</TableHead>
-                <TableHead className="text-right">Circulating Supply</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {hasCoinsAdded
-                ? selectedWatchlist?.coins.map((coin) => (
-                    <TableRow key={coin.id}>
-                      <TableCell>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <StarIcon
-                                className="h-5 w-5 text-[#f6b97e] cursor-pointer"
-                                fill="#f6b97e"
-                                onClick={() => handleRemoveCoin(coin.id)}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Remove from watchlist</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </TableCell>
-                      <TableCell>{coin.cmcRank}</TableCell>
-                      <TableCell>{coin.name}</TableCell>
-                      <TableCell align="right">
-                        {formatPrice(coin.price)}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        className={
-                          coin.oneHourChange >= 0
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {formatPrice(coin.oneHourChange, false)}%
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        className={
-                          coin.oneDayChange >= 0
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {formatPrice(coin.oneDayChange, false)}%
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        className={
-                          coin.sevenDaysChange >= 0
-                            ? "text-green-500"
-                            : "text-red-500"
-                        }
-                      >
-                        {formatPrice(coin.sevenDaysChange, false)}%
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatAsCurrency(+coin.marketCap.toFixed(2))}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatAsCurrency(+coin.oneDayVolume.toFixed(2))}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatAsCurrency(+coin.circulatingSupply.toFixed(2))}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : Array.from({ length: 10 }, (_, index) => (
-                    <TableRow key={index} className="hover:bg-background">
-                      <TableCell>
-                        <Skeleton className="h-4 w-4" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-12" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24 ml-auto" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-            </TableBody>
+          <div className="relative">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead></TableHead>
+                  <TableHead>#</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="text-right">Price</TableHead>
+                  <TableHead className="text-right">1h %</TableHead>
+                  <TableHead className="text-right">24h %</TableHead>
+                  <TableHead className="text-right">7d %</TableHead>
+                  <TableHead className="text-right">Market Cap</TableHead>
+                  <TableHead className="text-right">Volume (24h)</TableHead>
+                  <TableHead className="text-right">
+                    Circulating Supply
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {hasCoinsAdded
+                  ? selectedWatchlist?.coins.map((coin) => (
+                      <TableRow key={coin.id}>
+                        <TableCell>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <StarIcon
+                                  className="h-5 w-5 text-[#f6b97e] cursor-pointer"
+                                  fill="#f6b97e"
+                                  onClick={() => handleRemoveCoin(coin.id)}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Remove from watchlist</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+                        <TableCell>{coin.cmcRank}</TableCell>
+                        <TableCell>{coin.name}</TableCell>
+                        <TableCell align="right">
+                          {formatPrice(coin.price)}
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          className={
+                            coin.oneHourChange >= 0
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          {formatPrice(coin.oneHourChange, false)}%
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          className={
+                            coin.oneDayChange >= 0
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          {formatPrice(coin.oneDayChange, false)}%
+                        </TableCell>
+                        <TableCell
+                          align="right"
+                          className={
+                            coin.sevenDaysChange >= 0
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          {formatPrice(coin.sevenDaysChange, false)}%
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatAsCurrency(+coin.marketCap.toFixed(2))}
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatAsCurrency(+coin.oneDayVolume.toFixed(2))}
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatAsCurrency(+coin.circulatingSupply.toFixed(2))}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : Array.from({ length: 10 }, (_, index) => (
+                      <TableRow key={index} className="hover:bg-background">
+                        <TableCell>
+                          <Skeleton className="h-4 w-4" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-12" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-24 ml-auto" />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+              </TableBody>
+            </Table>
             {!hasCoinsAdded && (
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
                 <Image
@@ -319,7 +323,7 @@ const page = () => {
                 </div>
               </div>
             )}
-          </Table>
+          </div>
           {hasCoinsAdded && <AddCoinToWatchlistDialog />}
         </div>
       </div>
