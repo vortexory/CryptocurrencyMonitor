@@ -2,7 +2,7 @@
 
 [Live Website](https://crypto-wallet-livid.vercel.app/)
 
-<img src="/public/app-demo-portfolio.png">
+<img src="/app-demo/portfolio.png">
 
 ## Stack
 - Next.js (Frontend + Backend)
