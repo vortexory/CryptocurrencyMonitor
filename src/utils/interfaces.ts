@@ -51,8 +51,8 @@ export interface QuoteResponse {
 }
 
 export interface SelectedCoinInfo {
-  quantity: number;
-  pricePerCoin: number;
+  quantity: string;
+  pricePerCoin: string;
 }
 
 export interface WatchlistCoin {

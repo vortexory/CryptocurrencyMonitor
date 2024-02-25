@@ -153,32 +153,39 @@ const Transactions = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions?.map((transaction) => (
-            <TableRow key={transaction._id}>
-              <TableCell>
-                <div className="flex-container-center gap-4">
-                  <Avatar>
-                    <AvatarFallback>
-                      {transaction.type.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm">
-                      {transaction.type.charAt(0).toUpperCase() +
-                        transaction.type.slice(1)}
-                    </p>
-                    <p>{formatDate(transaction.createdAt)}</p>
+          {transactions
+            ?.sort((a, b) => {
+              const dateA = new Date(a.createdAt);
+              const dateB = new Date(b.createdAt);
+
+              return dateB.valueOf() - dateA.valueOf();
+            })
+            .map((transaction) => (
+              <TableRow key={transaction._id}>
+                <TableCell>
+                  <div className="flex-container-center gap-4">
+                    <Avatar>
+                      <AvatarFallback>
+                        {transaction.type.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm">
+                        {transaction.type.charAt(0).toUpperCase() +
+                          transaction.type.slice(1)}
+                      </p>
+                      <p>{formatDate(transaction.createdAt)}</p>
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="text-right">
-                {formatPrice(transaction.pricePerCoin)}
-              </TableCell>
-              <TableCell className="text-right">
-                {transaction.quantity}
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell className="text-right">
+                  {formatPrice(transaction.pricePerCoin)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {transaction.quantity}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </>

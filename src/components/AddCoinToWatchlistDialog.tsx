@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "lucide-react";
 import { Input } from "./ui/input";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "./ui/badge";
 import { CoinData, Session, WatchlistCoin } from "@/utils/interfaces";
 import axios from "axios";
@@ -27,7 +27,6 @@ import Loader from "./Loader";
 const AddCoinToWatchlistDialog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
 
   const [selectedCoins, setSelectedCoins] = useState<
     {
@@ -49,12 +48,14 @@ const AddCoinToWatchlistDialog = () => {
   const { toast } = useToast();
 
   const session = data as Session | null;
+  const queryClient = useQueryClient();
 
   const {
     data: coins,
     isLoading,
     refetch,
     isFetching,
+    error,
   } = useQuery({
     queryFn: async () => {
       const response = await fetch(
@@ -65,6 +66,7 @@ const AddCoinToWatchlistDialog = () => {
     },
     queryKey: ["coins"],
     enabled: false,
+    retry: false,
   });
 
   const { mutateAsync, isPending } = useMutation({
@@ -95,9 +97,6 @@ const AddCoinToWatchlistDialog = () => {
 
   const searchCoin = () => {
     if (searchTerm) {
-      if (!hasSearched) {
-        setHasSearched(true);
-      }
       refetch();
     }
   };
@@ -150,7 +149,7 @@ const AddCoinToWatchlistDialog = () => {
   const resetDialogState = () => {
     setSelectedCoins([]);
     setInputValue("");
-    setHasSearched(false);
+    queryClient.setQueryData(["coins"], null);
   };
 
   useEffect(() => {
@@ -180,65 +179,59 @@ const AddCoinToWatchlistDialog = () => {
               placeholder="ETH"
               value={inputValue}
               onChange={(e) => {
-                if (hasSearched) {
-                  setHasSearched(false);
-                }
-
                 setInputValue(e.target.value);
               }}
             />
           </div>
 
-          <div className="flex flex-col gap-6">
-            {isLoading || isFetching ? (
-              <Loader size={50} />
-            ) : hasSearched ? (
-              coins?.length > 0 ? (
-                <div className="flex flex-col gap-3">
-                  {coins.map((coinObj: any) => {
-                    const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
-                    const watchlistCoins = selectedWatchlist?.coins;
-                    const coinExists = watchlistCoins?.find(
-                      (c) => c.id === coin.id
-                    );
+          {isLoading || isFetching ? (
+            <Loader size={50} />
+          ) : !error ? (
+            coins?.length > 0 && (
+              <div className="flex flex-col gap-3">
+                {coins?.map((coinObj: any) => {
+                  const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                  const watchlistCoins = selectedWatchlist?.coins;
+                  const coinExists = watchlistCoins?.find(
+                    (c) => c.id === coin.id
+                  );
 
-                    return (
-                      <Badge
-                        className="py-2 rounded-md w-full flex-container-center justify-between"
-                        key={coin.id}
-                        variant="secondary"
-                      >
-                        <p>
-                          {coin.name} {coin.symbol}
-                        </p>
-                        {!coinExists ? (
-                          <Checkbox
-                            checked={
-                              !!selectedCoins.find((c) => c.id === coin.id)
-                            }
-                            onCheckedChange={(e) => handleToggleCoin(e, coin)}
-                          />
-                        ) : (
-                          <p className="text-[10px]">Added</p>
-                        )}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              ) : (
-                <Badge className="py-2" variant="destructive">
-                  Coin not found
-                </Badge>
-              )
-            ) : null}
-            <Button
-              type="button"
-              disabled={!searchTerm || isLoading || isPending || isFetching}
-              onClick={searchCoin}
-            >
-              Search
-            </Button>
-          </div>
+                  return (
+                    <Badge
+                      className="py-2 rounded-md w-full flex-container-center justify-between"
+                      key={coin.id}
+                      variant="secondary"
+                    >
+                      <p>
+                        {coin.name} {coin.symbol}
+                      </p>
+                      {!coinExists ? (
+                        <Checkbox
+                          checked={
+                            !!selectedCoins.find((c) => c.id === coin.id)
+                          }
+                          onCheckedChange={(e) => handleToggleCoin(e, coin)}
+                        />
+                      ) : (
+                        <p className="text-[10px]">Added</p>
+                      )}
+                    </Badge>
+                  );
+                })}
+              </div>
+            )
+          ) : (
+            <Badge className="py-2" variant="destructive">
+              Coin not found
+            </Badge>
+          )}
+          <Button
+            type="button"
+            disabled={!searchTerm || isLoading || isPending || isFetching}
+            onClick={searchCoin}
+          >
+            Search
+          </Button>
         </div>
 
         <DialogFooter className="sm:justify-end">

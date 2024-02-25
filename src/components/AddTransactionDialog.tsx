@@ -22,7 +22,7 @@ import {
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
-import { formatPrice } from "@/utils/functions";
+import { formatPrice, isValidInput } from "@/utils/functions";
 import Loader from "./Loader";
 
 const AddTransactionDialog = ({
@@ -53,8 +53,8 @@ const AddTransactionDialog = ({
   const queryClient = useQueryClient();
 
   const [selectedCoinInfo, setSelectedCoinInfo] = useState<SelectedCoinInfo>({
-    quantity: 0,
-    pricePerCoin: 0,
+    quantity: "",
+    pricePerCoin: "",
   });
 
   const { data: coin, isLoading } = useQuery({
@@ -106,8 +106,8 @@ const AddTransactionDialog = ({
           userId: session.user.id,
           walletId: walletId,
           coinApiID,
-          quantity: selectedCoinInfo.quantity,
-          pricePerCoin: selectedCoinInfo.pricePerCoin,
+          quantity: +selectedCoinInfo.quantity.replace(",", "."),
+          pricePerCoin: +selectedCoinInfo.pricePerCoin.replace(",", "."),
           type,
         };
 
@@ -122,8 +122,8 @@ const AddTransactionDialog = ({
 
   const resetDialogState = () => {
     setSelectedCoinInfo({
-      quantity: 0,
-      pricePerCoin: 0,
+      quantity: "",
+      pricePerCoin: "",
     });
   };
 
@@ -131,7 +131,7 @@ const AddTransactionDialog = ({
     if (coin) {
       setSelectedCoinInfo((prev) => ({
         ...prev,
-        pricePerCoin: coin.liveValue,
+        pricePerCoin: coin.liveValue?.toFixed(2).toString() ?? "",
       }));
     }
 
@@ -144,7 +144,9 @@ const AddTransactionDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add a coin</DialogTitle>
+          <DialogTitle>
+            {type === "buy" ? "Add coins" : "Sell coins"}
+          </DialogTitle>
         </DialogHeader>
         {isLoading ? (
           <Loader size={50} />
@@ -157,15 +159,18 @@ const AddTransactionDialog = ({
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
-                    type="number"
                     placeholder="0.00"
                     value={selectedCoinInfo.quantity}
-                    onChange={(e) =>
-                      setSelectedCoinInfo((prev) => ({
-                        ...prev,
-                        quantity: Number(e.target.value),
-                      }))
-                    }
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+
+                      if (isValidInput(inputValue)) {
+                        setSelectedCoinInfo((prev) => ({
+                          ...prev,
+                          quantity: inputValue,
+                        }));
+                      }
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
@@ -174,13 +179,17 @@ const AddTransactionDialog = ({
                     id="ppc"
                     type="number"
                     placeholder="0.00"
-                    value={selectedCoinInfo.pricePerCoin.toFixed(2)}
-                    onChange={(e) =>
-                      setSelectedCoinInfo((prev) => ({
-                        ...prev,
-                        pricePerCoin: Number(e.target.value),
-                      }))
-                    }
+                    value={selectedCoinInfo.pricePerCoin}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+
+                      if (isValidInput(inputValue)) {
+                        setSelectedCoinInfo((prev) => ({
+                          ...prev,
+                          pricePerCoin: e.target.value,
+                        }));
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -188,7 +197,8 @@ const AddTransactionDialog = ({
                 <h6 className="font-bold mb-1">Total Spent</h6>
                 <p>
                   {formatPrice(
-                    selectedCoinInfo.quantity * selectedCoinInfo.pricePerCoin
+                    +selectedCoinInfo.quantity.replace(",", ".") *
+                      +selectedCoinInfo.pricePerCoin.replace(",", ".")
                   )}
                 </p>
               </div>

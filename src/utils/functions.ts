@@ -8,15 +8,17 @@ export const formatAsCurrency = (price: number) => {
 };
 
 export const formatPrice = (price: number, asCurrency: boolean = true) => {
-  if (price === 0) return asCurrency ? formatAsCurrency(0) : 0;
+  const priceInCents = Math.round(price * 100);
 
-  if (price >= 0.01) {
-    return asCurrency ? formatAsCurrency(+price.toFixed(2)) : +price.toFixed(2);
+  if (priceInCents === 0) return asCurrency ? formatAsCurrency(0) : 0;
+
+  if (priceInCents >= 1) {
+    return asCurrency
+      ? formatAsCurrency(priceInCents / 100)
+      : priceInCents / 100;
   } else {
-    const priceAsString = price.toString();
-
+    const priceAsString = priceInCents.toString();
     const decimals = priceAsString.split(".")[1];
-
     let initialIndex = 0;
 
     for (let i = 0; i <= decimals?.length - 1; i++) {
@@ -28,9 +30,10 @@ export const formatPrice = (price: number, asCurrency: boolean = true) => {
     }
 
     const toFixed = initialIndex + 2;
+
     return asCurrency
-      ? formatAsCurrency(+price.toFixed(toFixed))
-      : +price.toFixed(toFixed);
+      ? formatAsCurrency(priceInCents / 100).replace(/\..*/, "")
+      : priceInCents / 100;
   }
 };
 
@@ -161,4 +164,8 @@ export const calculateBoughtQty = (transactions: Transaction[]) => {
   const totalQty = costArray.reduce((acc, currentVal) => acc + currentVal, 0);
 
   return +totalQty;
+};
+
+export const isValidInput = (input: string) => {
+  return /^(?:\d+(?:[.,]\d*)?|\d*(?:[.,]\d+)?|)$/.test(input);
 };

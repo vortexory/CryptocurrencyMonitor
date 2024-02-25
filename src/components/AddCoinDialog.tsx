@@ -25,7 +25,7 @@ import { useWallet } from "@/providers/WalletProvider";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
-import { formatPrice } from "@/utils/functions";
+import { formatPrice, isValidInput } from "@/utils/functions";
 import Loader from "./Loader";
 
 const AddCoinDialog = ({
@@ -40,17 +40,15 @@ const AddCoinDialog = ({
   const { toast } = useToast();
 
   const session = data as Session | null;
-
   const queryClient = useQueryClient();
 
   const { selectedCoin, selectCoin, unselectCoin } = useWallet();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
-  const [hasSearched, setHasSearched] = useState<boolean>(false);
   const [selectedCoinInfo, setSelectedCoinInfo] = useState<SelectedCoinInfo>({
-    quantity: 0,
-    pricePerCoin: 0,
+    quantity: "",
+    pricePerCoin: "",
   });
 
   const {
@@ -58,6 +56,7 @@ const AddCoinDialog = ({
     isLoading,
     refetch,
     isFetching,
+    error,
   } = useQuery({
     queryFn: async () => {
       const response = await fetch(
@@ -68,6 +67,7 @@ const AddCoinDialog = ({
     },
     queryKey: ["coins"],
     enabled: false,
+    retry: false,
   });
 
   const { mutateAsync, isPending } = useMutation({
@@ -102,9 +102,6 @@ const AddCoinDialog = ({
 
   const searchCoin = () => {
     if (searchTerm) {
-      if (!hasSearched) {
-        setHasSearched(true);
-      }
       refetch();
     }
   };
@@ -123,8 +120,8 @@ const AddCoinDialog = ({
           walletId: walletId,
           coinName: `${selectedCoin.name} ${selectedCoin.symbol}`,
           coinApiID: selectedCoin.id,
-          quantity: selectedCoinInfo.quantity,
-          pricePerCoin: selectedCoinInfo.pricePerCoin,
+          quantity: +selectedCoinInfo.quantity.replace(",", "."),
+          pricePerCoin: +selectedCoinInfo.pricePerCoin.replace(",", "."),
         };
 
         await mutateAsync(coinData);
@@ -139,11 +136,11 @@ const AddCoinDialog = ({
   const resetDialogState = () => {
     unselectCoin();
     setSelectedCoinInfo({
-      quantity: 0,
-      pricePerCoin: 0,
+      quantity: "",
+      pricePerCoin: "",
     });
     setInputValue("");
-    setHasSearched(false);
+    queryClient.setQueryData(["coins"], null);
   };
 
   useEffect(() => {
@@ -172,63 +169,59 @@ const AddCoinDialog = ({
                 placeholder="Search"
                 value={inputValue}
                 onChange={(e) => {
-                  if (hasSearched) {
-                    setHasSearched(false);
-                  }
-
                   setInputValue(e.target.value);
                 }}
               />
 
-              <div className="flex flex-col gap-6">
-                {isLoading || isFetching ? (
-                  <Loader size={50} />
-                ) : hasSearched ? (
-                  coins?.length > 0 ? (
-                    <div className="flex flex-col gap-3">
-                      {coins.map((coinObj: any) => {
-                        const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
-                        return (
-                          <Badge
-                            onClick={() => {
-                              selectCoin(coin);
+              {isLoading || isFetching ? (
+                <Loader size={50} />
+              ) : !error ? (
+                coins?.length > 0 && (
+                  <div className="flex flex-col gap-3">
+                    {coins?.map((coinObj: any) => {
+                      const coin: CoinData = coinObj[Object.keys(coinObj)[0]];
+                      return (
+                        <Badge
+                          onClick={() => {
+                            selectCoin(coin);
 
-                              if (coin.quote.USD.price) {
-                                setSelectedCoinInfo((prev) => ({
-                                  ...prev,
-                                  pricePerCoin: coin.quote.USD.price ?? 0,
-                                }));
-                              }
-                            }}
-                            className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
-                            key={coin.id}
-                            variant="secondary"
-                          >
-                            <p>
-                              {coin.name} {coin.symbol} -{" "}
-                              {coin.quote.USD.price
-                                ? `$${coin.quote.USD.price.toFixed(2)}`
-                                : "Price not provided"}
-                            </p>
-                            <ChevronRight />
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <Badge className="py-2" variant="destructive">
-                      Coin not found
-                    </Badge>
-                  )
-                ) : null}
-                <Button
-                  type="button"
-                  disabled={!searchTerm || isLoading || isFetching}
-                  onClick={searchCoin}
-                >
-                  Search
-                </Button>
-              </div>
+                            if (coin.quote.USD.price) {
+                              setSelectedCoinInfo((prev) => ({
+                                ...prev,
+                                pricePerCoin:
+                                  coin.quote.USD.price?.toFixed(2).toString() ??
+                                  "",
+                              }));
+                            }
+                          }}
+                          className="py-2 rounded-md w-full cursor-pointer flex-container-center justify-between"
+                          key={coin.id}
+                          variant="secondary"
+                        >
+                          <p>
+                            {coin.name} {coin.symbol} -{" "}
+                            {coin.quote.USD.price
+                              ? `$${coin.quote.USD.price.toFixed(2)}`
+                              : "Price not provided"}
+                          </p>
+                          <ChevronRight />
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                )
+              ) : (
+                <Badge className="py-2" variant="destructive">
+                  Coin not found
+                </Badge>
+              )}
+              <Button
+                type="button"
+                disabled={!searchTerm || isLoading || isFetching}
+                onClick={searchCoin}
+              >
+                Search
+              </Button>
             </>
           ) : (
             <>
@@ -241,30 +234,36 @@ const AddCoinDialog = ({
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
-                    type="number"
                     placeholder="0.00"
                     value={selectedCoinInfo.quantity}
-                    onChange={(e) =>
-                      setSelectedCoinInfo((prev) => ({
-                        ...prev,
-                        quantity: Number(e.target.value),
-                      }))
-                    }
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+
+                      if (isValidInput(inputValue)) {
+                        setSelectedCoinInfo((prev) => ({
+                          ...prev,
+                          quantity: inputValue,
+                        }));
+                      }
+                    }}
                   />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <Label htmlFor="ppc">Price Per Coin</Label>
                   <Input
                     id="ppc"
-                    type="number"
                     placeholder="0.00"
-                    value={selectedCoinInfo.pricePerCoin.toFixed(2)}
-                    onChange={(e) =>
-                      setSelectedCoinInfo((prev) => ({
-                        ...prev,
-                        pricePerCoin: Number(e.target.value),
-                      }))
-                    }
+                    value={selectedCoinInfo.pricePerCoin}
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+
+                      if (isValidInput(inputValue)) {
+                        setSelectedCoinInfo((prev) => ({
+                          ...prev,
+                          pricePerCoin: e.target.value,
+                        }));
+                      }
+                    }}
                   />
                 </div>
               </div>
@@ -272,7 +271,8 @@ const AddCoinDialog = ({
                 <h6 className="font-bold mb-1">Total Spent</h6>
                 <p>
                   {formatPrice(
-                    selectedCoinInfo.quantity * selectedCoinInfo.pricePerCoin
+                    +selectedCoinInfo.quantity.replace(",", ".") *
+                      +selectedCoinInfo.pricePerCoin.replace(",", ".")
                   )}
                 </p>
               </div>

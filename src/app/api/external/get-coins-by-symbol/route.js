@@ -20,9 +20,9 @@ export const GET = async (req) => {
     const mapData = await mapResponse.json();
 
     if (mapData.status.error_code !== 0) {
-      return res
-        .status(mapData.status.error_code)
-        .json({ error: "Error fetching data" });
+      return new Response("Error fetching data", {
+        status: mapData.status.error_code,
+      });
     }
 
     let coinsList = [];
