@@ -17,6 +17,7 @@ import { Session } from "@/utils/interfaces";
 import axios from "axios";
 import { useToast } from "./ui/use-toast";
 import { Label } from "./ui/label";
+import { isValidInput } from "@/utils/functions";
 
 const AddEditGoalDialog = ({
   setWalletsValueGoal,
@@ -30,7 +31,7 @@ const AddEditGoalDialog = ({
 
   const session = data as Session | null;
 
-  const [goal, setGoal] = useState<number>(0);
+  const [goal, setGoal] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { mutateAsync, isPending } = useMutation({
@@ -61,7 +62,7 @@ const AddEditGoalDialog = ({
       if (session?.user?.id) {
         const accountInfo = {
           userId: session.user.id,
-          newGoal: goal,
+          newGoal: +goal.replace(",", "."),
         };
 
         await mutateAsync(accountInfo);
@@ -74,7 +75,7 @@ const AddEditGoalDialog = ({
   };
 
   useEffect(() => {
-    setGoal(walletsValueGoal);
+    setGoal(walletsValueGoal.toFixed(2));
   }, [walletsValueGoal, isModalOpen]);
 
   return (
@@ -95,17 +96,22 @@ const AddEditGoalDialog = ({
             <Label htmlFor="goal">Goal</Label>
             <Input
               id="goal"
-              placeholder="$100,000"
+              placeholder="100,000"
               value={goal}
-              onChange={(e) => setGoal(+e.target.value)}
-              type="number"
+              onChange={(e) => {
+                const inputValue = e.target.value;
+
+                if (isValidInput(inputValue)) {
+                  setGoal(inputValue);
+                }
+              }}
             />
           </div>
 
           <Button
             type="button"
             onClick={handleGoal}
-            disabled={isPending || walletsValueGoal === goal}
+            disabled={isPending || walletsValueGoal === +goal}
           >
             {walletsValueGoal === 0 ? "Set" : "Edit"}
           </Button>

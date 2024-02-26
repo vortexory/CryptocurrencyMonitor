@@ -38,7 +38,7 @@ import Loader from "@/components/Loader";
 import DeleteWatchlistDialog from "@/components/DeleteWatchlistDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import { formatAsCurrency, formatPrice } from "@/utils/functions";
+import { formatAsCurrency, formatNumber } from "@/utils/functions";
 
 const page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -225,7 +225,7 @@ const page = () => {
                         <TableCell>{coin.cmcRank}</TableCell>
                         <TableCell>{coin.name}</TableCell>
                         <TableCell align="right">
-                          {formatPrice(coin.price)}
+                          {formatNumber(coin.price)}
                         </TableCell>
                         <TableCell
                           align="right"
@@ -235,7 +235,7 @@ const page = () => {
                               : "text-red-500"
                           }
                         >
-                          {formatPrice(coin.oneHourChange, false)}%
+                          {formatNumber(coin.oneHourChange, false)}%
                         </TableCell>
                         <TableCell
                           align="right"
@@ -245,7 +245,7 @@ const page = () => {
                               : "text-red-500"
                           }
                         >
-                          {formatPrice(coin.oneDayChange, false)}%
+                          {formatNumber(coin.oneDayChange, false)}%
                         </TableCell>
                         <TableCell
                           align="right"
@@ -255,7 +255,7 @@ const page = () => {
                               : "text-red-500"
                           }
                         >
-                          {formatPrice(coin.sevenDaysChange, false)}%
+                          {formatNumber(coin.sevenDaysChange, false)}%
                         </TableCell>
                         <TableCell align="right">
                           {formatAsCurrency(+coin.marketCap.toFixed(2))}

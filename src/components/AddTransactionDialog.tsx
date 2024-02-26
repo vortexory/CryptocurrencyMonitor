@@ -22,7 +22,7 @@ import {
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
-import { formatPrice, isValidInput } from "@/utils/functions";
+import { formatNumber, isValidInput } from "@/utils/functions";
 import Loader from "./Loader";
 
 const AddTransactionDialog = ({
@@ -177,7 +177,6 @@ const AddTransactionDialog = ({
                   <Label htmlFor="ppc">Price Per Coin</Label>
                   <Input
                     id="ppc"
-                    type="number"
                     placeholder="0.00"
                     value={selectedCoinInfo.pricePerCoin}
                     onChange={(e) => {
@@ -196,7 +195,7 @@ const AddTransactionDialog = ({
               <div className="bg-secondary p-3 rounded-md">
                 <h6 className="font-bold mb-1">Total Spent</h6>
                 <p>
-                  {formatPrice(
+                  {formatNumber(
                     +selectedCoinInfo.quantity.replace(",", ".") *
                       +selectedCoinInfo.pricePerCoin.replace(",", ".")
                   )}

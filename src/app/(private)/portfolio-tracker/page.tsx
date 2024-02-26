@@ -30,7 +30,8 @@ import {
   aggregateCoins,
   calculateAvgPrices,
   calculateCoinValue,
-  formatPrice,
+  formatAsCurrency,
+  formatNumber,
   getColorByIndex,
 } from "@/utils/functions";
 import { useToast } from "@/components/ui/use-toast";
@@ -184,7 +185,7 @@ const page = () => {
         <Wallet
           walletName="Overview"
           selected={!selectedWallet}
-          totalValue={formatPrice(totalWalletsValue)}
+          totalValue={formatNumber(totalWalletsValue)}
           onClick={() => handleChangeWallet(null)}
           color="#5178ff"
         />
@@ -196,7 +197,7 @@ const page = () => {
               <Wallet
                 key={wallet._id}
                 walletName={wallet.name}
-                totalValue={formatPrice(wallet.totalValue)}
+                totalValue={formatNumber(wallet.totalValue)}
                 onClick={() => handleChangeWallet(wallet)}
                 selected={wallet._id === selectedWallet?._id}
                 color={getColorByIndex(i + 1)}
@@ -233,8 +234,8 @@ const page = () => {
                 </div>
                 <h3 className="mt-4">
                   {selectedWallet
-                    ? formatPrice(selectedWallet.totalValue)
-                    : formatPrice(totalWalletsValue)}
+                    ? formatNumber(selectedWallet.totalValue)
+                    : formatNumber(totalWalletsValue)}
                 </h3>
               </div>
 
@@ -247,7 +248,7 @@ const page = () => {
             <div className="w-full md:w-2/3 flex flex-col gap-4">
               <p className="text-sm text-muted-foreground font-bold">
                 {walletsValueGoal
-                  ? `Progress towards your goal - ${formatPrice(
+                  ? `Progress towards your goal - ${formatAsCurrency(
                       walletsValueGoal
                     )}`
                   : "You haven't set a goal yet"}
@@ -344,7 +345,7 @@ const page = () => {
                                 {coin.totalQuantity}
                               </TableCell>
                               <TableCell className="text-right">
-                                {formatPrice(
+                                {formatNumber(
                                   calculateAvgPrices(coin.transactions)
                                     .avgBuyPrice
                                 )}
@@ -352,7 +353,7 @@ const page = () => {
                               <TableCell className="text-right">
                                 {calculateAvgPrices(coin.transactions)
                                   .avgSellPrice
-                                  ? formatPrice(
+                                  ? formatNumber(
                                       calculateAvgPrices(coin.transactions)
                                         .avgSellPrice
                                     )

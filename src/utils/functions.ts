@@ -1,39 +1,38 @@
 import { Coin, Transaction, UserWallet } from "./interfaces";
 
-export const formatAsCurrency = (price: number) => {
+export const formatAsCurrency = (price: number, decimalPlaces = 2) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
+    maximumFractionDigits: decimalPlaces,
   }).format(price);
 };
 
-export const formatPrice = (price: number, asCurrency: boolean = true) => {
-  const priceInCents = Math.round(price * 100);
+export const formatNumber = (number: number, asCurrency = true): string => {
+  if (number === 0) {
+    return asCurrency ? formatAsCurrency(0) : "0";
+  }
 
-  if (priceInCents === 0) return asCurrency ? formatAsCurrency(0) : 0;
+  const isNegative = number < 0;
+  const absNumber = Math.abs(number);
 
-  if (priceInCents >= 1) {
-    return asCurrency
-      ? formatAsCurrency(priceInCents / 100)
-      : priceInCents / 100;
+  const numToReturn = isNegative ? -absNumber : +absNumber;
+
+  if (absNumber >= 0.01) {
+    return asCurrency ? formatAsCurrency(numToReturn) : numToReturn.toFixed(2);
   } else {
-    const priceAsString = priceInCents.toString();
-    const decimals = priceAsString.split(".")[1];
-    let initialIndex = 0;
-
-    for (let i = 0; i <= decimals?.length - 1; i++) {
-      if (decimals[i] === "0") {
-        initialIndex += 1;
-      } else {
-        break;
-      }
+    const decimalString = absNumber.toString().split(".")[1];
+    if (!decimalString) {
+      return asCurrency ? formatAsCurrency(0) : "0";
     }
 
-    const toFixed = initialIndex + 2;
+    const firstNonZeroIndex = decimalString
+      .split("")
+      .findIndex((digit) => digit !== "0");
 
     return asCurrency
-      ? formatAsCurrency(priceInCents / 100).replace(/\..*/, "")
-      : priceInCents / 100;
+      ? formatAsCurrency(numToReturn, firstNonZeroIndex + 4)
+      : numToReturn.toFixed(firstNonZeroIndex + 4);
   }
 };
 

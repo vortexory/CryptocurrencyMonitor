@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatAsCurrency, formatPrice } from "@/utils/functions";
+import { formatAsCurrency, formatNumber } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -66,7 +66,7 @@ export default function Home() {
               <TableRow key={coin.id}>
                 <TableCell className="font-medium">{coin.cmc_rank}</TableCell>
                 <TableCell>{`${coin.name} ${coin.symbol}`}</TableCell>
-                <TableCell>{formatPrice(coin.quote.USD.price ?? 0)}</TableCell>
+                <TableCell>{formatNumber(coin.quote.USD.price ?? 0)}</TableCell>
                 <TableCell
                   className={
                     (coin.quote.USD.percent_change_1h ?? 0) >= 0
@@ -74,7 +74,7 @@ export default function Home() {
                       : "text-red-500"
                   }
                 >
-                  {formatPrice(coin.quote.USD.percent_change_1h ?? 0, false)}%
+                  {formatNumber(coin.quote.USD.percent_change_1h ?? 0, false)}%
                 </TableCell>
                 <TableCell
                   className={
@@ -83,7 +83,7 @@ export default function Home() {
                       : "text-red-500"
                   }
                 >
-                  {formatPrice(coin.quote.USD.percent_change_24h ?? 0, false)}%
+                  {formatNumber(coin.quote.USD.percent_change_24h ?? 0, false)}%
                 </TableCell>
                 <TableCell
                   className={
@@ -92,7 +92,7 @@ export default function Home() {
                       : "text-red-500"
                   }
                 >
-                  {formatPrice(coin.quote.USD.percent_change_7d ?? 0, false)}%
+                  {formatNumber(coin.quote.USD.percent_change_7d ?? 0, false)}%
                 </TableCell>
                 <TableHead>
                   {formatAsCurrency(

@@ -18,7 +18,7 @@ import {
   calculateTotalSold,
   extractLastWord,
   formatDate,
-  formatPrice,
+  formatNumber,
 } from "@/utils/functions";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -109,7 +109,7 @@ const Transactions = ({
             </CardDescription>
           </CardHeader>
           <CardContent className="text-2xl">
-            {formatPrice(avgBuyPrice)}
+            {formatNumber(avgBuyPrice)}
           </CardContent>
         </Card>
         <Card className="flex-1">
@@ -124,7 +124,7 @@ const Transactions = ({
             }`}
           >
             {isProfitable && "+"}
-            {formatPrice(+difference)}
+            {formatNumber(+difference)}
 
             <div className="mt-2 flex-container-center gap-[2px]">
               {isProfitable ? (
@@ -137,7 +137,7 @@ const Transactions = ({
                   isProfitable ? "text-green-500" : "text-red-500"
                 }`}
               >
-                {formatPrice(percentage, false)}%
+                {formatNumber(percentage, false)}%
               </p>
             </div>
           </CardContent>
@@ -179,7 +179,7 @@ const Transactions = ({
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  {formatPrice(transaction.pricePerCoin)}
+                  {formatNumber(transaction.pricePerCoin)}
                 </TableCell>
                 <TableCell className="text-right">
                   {transaction.quantity}
