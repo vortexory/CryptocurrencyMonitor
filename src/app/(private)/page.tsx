@@ -12,22 +12,36 @@ import {
 } from "@/components/ui/table";
 import { formatAsCurrency, formatNumber } from "@/utils/functions";
 import { CoinData } from "@/utils/interfaces";
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Home() {
   const { status } = useSession();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [cryptocurrencies, setCryptocurrencies] = useState<CoinData[]>([]);
 
-  const { data: cryptocurrencies, isLoading } = useQuery({
-    queryFn: async () => {
-      const response = await axios.get("/api/external/get-top-coins");
+  useEffect(() => {
+    const fetchCoins = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("/api/external/get-top-coins");
+        setCryptocurrencies(response.data.data);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: "There was a problem with your request.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      return response.data;
-    },
-    queryKey: ["cryptocurrencies"],
-  });
+    fetchCoins();
+  }, []);
 
   if (isLoading || status === "loading") {
     return (
@@ -61,7 +75,7 @@ export default function Home() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cryptocurrencies?.data?.map((coin: CoinData) => {
+          {cryptocurrencies?.map((coin: CoinData) => {
             return (
               <TableRow key={coin.id}>
                 <TableCell className="font-medium">{coin.cmc_rank}</TableCell>

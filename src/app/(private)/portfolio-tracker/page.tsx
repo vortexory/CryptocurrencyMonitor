@@ -249,7 +249,8 @@ const page = () => {
               <p className="text-sm text-muted-foreground font-bold">
                 {walletsValueGoal
                   ? `Progress towards your goal - ${formatAsCurrency(
-                      walletsValueGoal
+                      walletsValueGoal,
+                      20
                     )}`
                   : "You haven't set a goal yet"}
               </p>

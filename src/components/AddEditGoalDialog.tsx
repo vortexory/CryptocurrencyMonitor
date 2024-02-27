@@ -75,7 +75,7 @@ const AddEditGoalDialog = ({
   };
 
   useEffect(() => {
-    setGoal(walletsValueGoal.toFixed(2));
+    setGoal(walletsValueGoal.toString());
   }, [walletsValueGoal, isModalOpen]);
 
   return (
