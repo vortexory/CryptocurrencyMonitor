@@ -47,7 +47,7 @@ A web application that provides users with real-time data on the most popular cr
 <br />
 
 - <b>Transactions -></b> Within the application, you can access a detailed transaction history for each owned coin, encompassing both buy and sell transactions. This section presents essential information, such as the quantity of the coin owned, the average buy price, and the current total profit or loss, factoring in the latest market price of the coin.
-<img src="public/app-demo/transactions.png" alt="transactions" />
+<img src="public/app-demo/coin-transactions.png" alt="transactions" />
 
 <br />
 
