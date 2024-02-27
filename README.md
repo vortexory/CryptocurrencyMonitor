@@ -31,7 +31,7 @@ A web application that provides users with real-time data on the most popular cr
 - Coin overview (total quantity owned, average buy price, total profit/loss, transactions)
 
 ## <a name="overview">🤸 Overview</a>
-- <b>Login Screen -></b> Start using the app effortlessly by selecting one of two providers: <b>Google</b> or <b>GitHub</b>. For new users, an account will be automatically created based on the email address.
+- <b>Login Screen -></b> Start using the application effortlessly by selecting one of two providers: <b>Google</b> or <b>GitHub</b>. For new users, an account will be automatically created based on the email address.
 <img src="public/app-demo/login-screen.png" alt="login-screen" />
 
 <br />
