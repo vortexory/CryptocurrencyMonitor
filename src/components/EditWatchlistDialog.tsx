@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { Session } from "@/utils/interfaces";
 import axios from "axios";
@@ -38,6 +38,8 @@ const EditWatchlistDialog = () => {
 
   const session = data as Session | null;
 
+  const queryClient = useQueryClient();
+
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: {
       userId: string;
@@ -51,6 +53,7 @@ const EditWatchlistDialog = () => {
     onSuccess: (res) => {
       setSelectedWatchlist(res.data.updatedWatchlist);
       setWatchlists(res.data.updatedWatchlists);
+      queryClient.invalidateQueries({ queryKey: ["watchlists"] });
       toast({
         title: "Watchlist updated",
         description: "Your watchlist has been updated successfully.",
@@ -70,8 +73,7 @@ const EditWatchlistDialog = () => {
       if (
         session?.user?.id &&
         selectedWatchlist?._id &&
-        watchlistDetails.name &&
-        watchlistDetails.description
+        watchlistDetails.name
       ) {
         const payload = {
           userId: session.user.id,
@@ -100,8 +102,7 @@ const EditWatchlistDialog = () => {
     (selectedWatchlist?.name === watchlistDetails.name &&
       selectedWatchlist?.description === watchlistDetails.description &&
       selectedWatchlist?.main === watchlistDetails.main) ||
-    !watchlistDetails.name ||
-    !watchlistDetails.description;
+    !watchlistDetails.name.trim();
 
   useEffect(() => {
     if (selectedWatchlist?._id) {

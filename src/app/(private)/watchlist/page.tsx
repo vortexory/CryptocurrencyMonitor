@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Session } from "@/utils/interfaces";
+import { Session, Watchlist } from "@/utils/interfaces";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, ChevronUp, PlusIcon, StarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -29,7 +29,7 @@ import {
 import CreateWatchlistDialog from "@/components/CreateWatchlistDialog";
 import AddCoinToWatchlistDialog from "@/components/AddCoinToWatchlistDialog";
 import { useWatchlist } from "@/providers/WatchlistProvider";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import EditWatchlistDialog from "@/components/EditWatchlistDialog";
@@ -45,11 +45,25 @@ const page = () => {
   const [dropdownOpen, setDropDownOpen] = useState<boolean>(false);
 
   const { data, status } = useSession();
+
   const { watchlists, selectedWatchlist, setWatchlists, setSelectedWatchlist } =
     useWatchlist();
 
   const session = data as Session;
+
   const hasCoinsAdded = (selectedWatchlist?.coins.length ?? 0) > 0;
+
+  const { data: userWatchlists, isLoading } = useQuery<Watchlist[]>({
+    queryFn: async () => {
+      const response = await axios.get(
+        `/api/watchlist/get-user-watchlists/${session?.user?.id}`
+      );
+
+      return response.data;
+    },
+    enabled: !!session?.user?.id,
+    queryKey: ["watchlists"],
+  });
 
   const { mutateAsync } = useMutation({
     mutationFn: (payload: {
@@ -92,16 +106,16 @@ const page = () => {
   };
 
   useEffect(() => {
-    if (session?.user) {
+    if (userWatchlists) {
       const mainWatchlist =
-        session.user.watchlists.find((watchlist) => watchlist.main) ?? null;
+        userWatchlists.find((watchlist) => watchlist.main) ?? null;
 
-      setWatchlists(session.user.watchlists);
+      setWatchlists(userWatchlists);
       setSelectedWatchlist(mainWatchlist);
     }
-  }, [session?.user]);
+  }, [userWatchlists]);
 
-  if (status === "loading") {
+  if (isLoading || status === "loading") {
     return (
       <div className="wrapper">
         <Loader />
