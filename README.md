@@ -1,8 +1,6 @@
 <div align="center">
   <br />
-  <a href="https://youtu.be/wm5gMKuwSYk?feature=shared" target="_blank">
   <img src="public/app-demo/banner.png" alt="banner" />
-  </a>
 </div>
 
 ## 📋 <a name="table">Table of Contents</a>
