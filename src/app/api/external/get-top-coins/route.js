@@ -25,3 +25,5 @@ export const GET = async () => {
     });
   }
 };
+
+export const revalidate = 0;
