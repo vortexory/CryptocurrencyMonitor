@@ -1,5 +1,7 @@
 import { CMC_API_KEY, CMC_LIST_URL } from "@/utils/constants";
 
+export const fetchCache = 'force-no-store';
+
 export const GET = async () => {
   try {
     const apiKey = process.env.CMC_API_KEY;
